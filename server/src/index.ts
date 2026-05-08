@@ -1,4 +1,5 @@
 // Fastify 服务入口：注册插件、路由、启动服务
+import 'dotenv/config';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
