@@ -3,24 +3,30 @@
 ## 需求分析
 
 ### 1. 项目背景
-为女朋友创建一个专属的浪漫网站，记录两人之间的美好时光。配备 AI 智能助手，具备记忆、工具调用和自我进化能力。
+为女朋友创建一个专属的浪漫网站，记录两人之间的美好时光。配备 AI 智能助手、虚拟宠物猫、多主题切换。
 
 ### 2. 核心功能
 
 | 模块 | 功能 |
 |---|---|
-| 心情记录 | 6 种心情表情 + 文字记录 + 历史查看 |
-| 吐槽专区 | 3 种吐槽类型 + 生气程度 1-10 级 |
-| 倒计时 | 重要日子实时倒计时（天/时/分/秒） |
-| 相册 | 照片上传 + 自动缩略图 + 瀑布流 |
-| 时间轴 | 重要事件垂直时间线 |
-| AI 助手 | LangGraph Agent + 记忆 + 工具 + 技能 + 进化 |
+| 心情记录 | 6 种心情表情 + 文字记录 + 回复互动 |
+| 吐槽专区 | 3 种吐槽类型 + 生气程度 1-10 级 + 回复互动 |
+| 倒计时 | 重要日子实时倒计时（天/时/分/秒）+ 回复互动 |
+| 相册 | 照片上传 + 自动缩略图 + 网格展示 + 回复互动 |
+| 时间轴 | 重要事件垂直时间线 + 回复互动 |
+| 回复系统 | 所有模块支持多人多条回复 |
+| AI 助手 | LangGraph Agent + 三层记忆 + 5 技能 + 10 工具 + 自我进化 |
+| 主题系统 | 4 套主题风格（粉/蓝/紫/绿）一键切换 |
+| 聊天框 | 3 种风格（经典/信纸/像素）+ 3 种按钮 |
+| 虚拟宠物 | 金条（金渐层猫咪）自主活动 + 可拖动 + 抚摸互动 |
 
 ### 3. 非功能需求
 - 响应式设计（手机 + 桌面）
 - JWT 认证保护隐私
 - 图片自动压缩 + 缩略图
 - Docker 一键部署
+- 主题切换持久化
+- 家具位置持久化
 
 ---
 
@@ -39,15 +45,16 @@
 
 ### 数据库 Schema
 
-```
-users           - 用户表（情侣两人）
-moods           - 心情记录
-rants           - 吐槽记录
-countdowns      - 倒计时
-photos          - 照片（文件路径 + 缩略图）
-timeline_events - 时间轴事件
-chat_messages   - AI 聊天记录
-```
+| 表 | 说明 |
+|---|---|
+| `users` | 用户表（情侣两人） |
+| `moods` | 心情记录 |
+| `rants` | 吐槽记录 |
+| `countdowns` | 倒计时 |
+| `photos` | 照片（文件路径 + 缩略图） |
+| `timeline_events` | 时间轴事件 |
+| `replies` | 回复（支持任意模块条目） |
+| `chat_messages` | AI 聊天记录 |
 
 ### API 端点
 
@@ -60,8 +67,10 @@ chat_messages   - AI 聊天记录
 | GET/POST/DELETE | /api/countdowns | 倒计时 CRUD |
 | GET/POST/DELETE | /api/photos | 照片 CRUD |
 | GET/POST/DELETE | /api/timeline | 时间轴 CRUD |
+| GET/POST/DELETE | /api/replies | 回复 CRUD |
 | POST | /api/chat | AI 聊天 |
 | GET | /api/chat/history | 聊天历史 |
+| GET | /api/config | 应用配置 |
 
 ---
 
@@ -83,13 +92,13 @@ chat_messages   - AI 聊天记录
 
 ### 技能模块
 
-| 技能 | 触发条件 | 可用工具 |
-|---|---|---|
-| 情绪支持 | 检测到负面情绪 | search_memory, save_memory, get_recent_moods |
-| 心情分析 | 询问心情状态 | get_recent_moods, search_memory |
-| 约会规划 | 提到约会/出去玩 | get_countdowns, search_memory, create_countdown |
-| 记忆守护 | 分享重要事件 | save_memory, record_event, search_memory |
-| 礼物建议 | 提到礼物/生日 | get_user_preferences, get_countdowns, search_memory |
+| 技能 | 触发条件 |
+|---|---|
+| 情绪支持 | 检测到负面情绪 |
+| 心情分析 | 询问心情状态 |
+| 约会规划 | 提到约会/出去玩 |
+| 记忆守护 | 分享重要事件 |
+| 礼物建议 | 提到礼物/生日 |
 
 ### 自我进化
 
@@ -98,35 +107,48 @@ chat_messages   - AI 聊天记录
 
 ---
 
+## 主题系统
+
+4 套主题通过 CSS 变量驱动：
+
+| 主题 | 主色 | 背景 |
+|---|---|---|
+| 浪漫粉 | #ff6b9d | #fff5f7 |
+| 清新蓝 | #4A90D9 | #f0f7ff |
+| 暗夜紫 | #a78bfa | #1a1024 |
+| 自然绿 | #10b981 | #f0fdf4 |
+
+---
+
+## 虚拟宠物猫
+
+金条（金渐层猫咪）：
+- 5 个 SVG 姿态（坐/走/睡/吃/撒娇）
+- 8 种行为状态 + 自主状态机
+- 可拖动（猫/猫窝/粮碗/水碗）
+- 位置 localStorage 持久化
+- 鼠标抚摸互动 + 爱心粒子
+
+---
+
 ## 端口配置
 
-| 服务 | 端口 | 健康检查 | 说明 |
-|---|---|---|---|
-| Nginx | 80 | - | 统一入口，反向代理 |
-| Client | 3000 | - | React 前端（Nginx 代理） |
-| Server | 3001 | /api/health | Node.js 后端 API |
-| AI Agent | 8000 | /health | Python AI 服务 |
-| PostgreSQL | 5432 | pg_isready | 数据库 |
-
-端口配置集中在 `config/app.json` 的 `ports` 字段和 `docker-compose.yml` 中。
+| 服务 | 端口 | 健康检查 |
+|---|---|---|
+| Nginx | 80 | - |
+| Client | 3000 | - |
+| Server | 3001 | /api/health |
+| AI Agent | 8000 | /health |
+| PostgreSQL | 5432 | pg_isready |
 
 ---
 
 ## 启动方式
 
 ```bash
-# 一键启动（推荐）
-./start.sh
-
-# 一键停止
-./stop.sh
-
-# 本地开发（热更新）
-./dev.sh
-
-# 手动 Docker 启动
-cp .env.example .env
-docker compose up -d
+./start.sh    # Docker 一键启动
+./stop.sh     # 一键停止
+./dev.sh      # 本地开发（热更新）
 ```
 
 ---
