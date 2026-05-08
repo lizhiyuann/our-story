@@ -62,7 +62,7 @@ def _get_provider() -> tuple[str, ProviderConfig]:
     provider = ProviderConfig(
         name=provider_name,
         env_key=pcfg.get("envKey", ""),
-        base_url=pcfg.get("base_url", ""),
+        base_url=pcfg.get("baseUrl", ""),
         default_model=pcfg.get("defaultModel", ""),
         models=pcfg.get("models", {}),
     )
