@@ -53,11 +53,13 @@ export function GalleryPage() {
         </div>
         <div className="md:col-span-2">
           {isLoading ? <LoadingState /> : isError ? <EmptyState icon="⚠️" message="加载失败，请刷新重试" /> : photos.length === 0 ? <EmptyState icon="📸" message="还没有照片哦~" /> : (
-            <div className="columns-2 lg:columns-3 gap-4 space-y-4">
+            <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
               {photos.map((photo) => (
-                <div key={photo.id} className="break-inside-avoid bg-[var(--color-card)] rounded-card shadow overflow-hidden group">
-                  <img src={photo.thumbnailPath ?? photo.filePath} alt={photo.caption ?? ''}
-                    className="w-full object-cover cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setPreviewSrc(photo.filePath)} />
+                <div key={photo.id} className="bg-[var(--color-card)] rounded-card shadow overflow-hidden group">
+                  <div className="aspect-square overflow-hidden">
+                    <img src={photo.thumbnailPath ?? photo.filePath} alt={photo.caption ?? ''}
+                      className="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform" onClick={() => setPreviewSrc(photo.filePath)} />
+                  </div>
                   <div className="p-3">
                     <div className="flex justify-between items-start">
                       <p className="text-sm text-[var(--color-text)] flex-1">{photo.caption}</p>

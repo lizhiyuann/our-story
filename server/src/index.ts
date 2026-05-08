@@ -1,10 +1,12 @@
 // Fastify 服务入口：注册插件、路由、启动服务
 import 'dotenv/config';
+import path from 'node:path';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import multipart from '@fastify/multipart';
 import cookie from '@fastify/cookie';
 import jwt from '@fastify/jwt';
+import fastifyStatic from '@fastify/static';
 import { loadEnv } from './config/env.js';
 import { seedUsers } from './services/auth.service.js';
 import { authRoutes } from './routes/auth.routes.js';
@@ -31,6 +33,11 @@ await app.register(cors, {
 await app.register(cookie);
 await app.register(jwt, { secret: env.JWT_SECRET });
 await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });
+await app.register(fastifyStatic, {
+  root: path.join(process.cwd(), 'uploads'),
+  prefix: '/uploads/',
+  decorateReply: false,
+});
 
 // Error handler
 app.setErrorHandler((error, _request, reply) => {
