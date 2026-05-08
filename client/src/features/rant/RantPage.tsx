@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useRants, useCreateRant, useDeleteRant } from '../../hooks/useRant';
 import { useToast } from '../../components/Toast';
 import { PageHeader } from '../../components/PageHeader';
+import { ReplySection } from '../../components/ReplySection';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/LoadingState';
 import { RANT_TYPE_NAMES } from '../../types';
@@ -74,6 +75,7 @@ export function RantPage() {
                 </div>
                 <p className="text-gray-700 mb-2">{rant.content}</p>
                 <div className="h-1 bg-gradient-to-r from-yellow-400 to-red-500 rounded" style={{ width: `${rant.intensity * 10}%` }} />
+                <ReplySection targetType="rant" targetId={rant.id} />
               </div>
             ))}
           </div>

@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { usePhotos, useUploadPhoto, useDeletePhoto } from '../../hooks/usePhoto';
 import { useToast } from '../../components/Toast';
 import { PageHeader } from '../../components/PageHeader';
+import { ReplySection } from '../../components/ReplySection';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/LoadingState';
 import { Modal } from '../../components/Modal';
@@ -64,6 +65,7 @@ export function GalleryPage() {
                         className="text-gray-300 hover:text-red-500 transition-colors text-xs ml-2">删除</button>
                     </div>
                     <p className="text-xs text-gray-400 mt-1">{formatRelativeTime(photo.createdAt)}</p>
+                    <ReplySection targetType="photo" targetId={photo.id} />
                   </div>
                 </div>
               ))}

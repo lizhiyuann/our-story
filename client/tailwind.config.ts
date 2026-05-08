@@ -6,14 +6,18 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#ff6b9d',
-          dark: '#e55a8a',
-          light: '#ff9ff3',
+          DEFAULT: 'var(--color-primary)',
+          dark: 'var(--color-primary-dark)',
+          light: 'var(--color-primary-light)',
         },
         love: {
-          bg: '#fff5f7',
-          'bg-alt': '#fff0f3',
-          border: '#ffd6e0',
+          bg: 'var(--color-bg)',
+          'bg-alt': 'var(--color-bg-alt)',
+          border: 'var(--color-border)',
+          card: 'var(--color-card)',
+          text: 'var(--color-text)',
+          'text-light': 'var(--color-text-light)',
+          'text-muted': 'var(--color-text-muted)',
         },
       },
       borderRadius: {
@@ -28,10 +32,15 @@ export default {
           '0%, 100%': { transform: 'translateY(0) rotate(0deg)' },
           '50%': { transform: 'translateY(-20px) rotate(180deg)' },
         },
+        heartbeat: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.15)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 0.3s ease',
         float: 'float 6s ease-in-out infinite',
+        heartbeat: 'heartbeat 1.5s ease-in-out infinite',
       },
     },
   },

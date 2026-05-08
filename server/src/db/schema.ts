@@ -55,6 +55,16 @@ export const timelineEvents = pgTable('timeline_events', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// 回复表：支持对任意模块条目（心情/吐槽/倒计时/时间轴/照片）的回复
+export const replies = pgTable('replies', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id).notNull(),
+  targetType: varchar('target_type', { length: 20 }).notNull(),  // mood/rant/countdown/timeline/photo
+  targetId: integer('target_id').notNull(),
+  content: text('content').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
 export const chatMessages = pgTable('chat_messages', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').references(() => users.id).notNull(),

@@ -1,9 +1,13 @@
+@import './styles/themes.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @apply bg-love-bg text-gray-800 font-sans;
+    @apply font-sans;
+    background-color: var(--color-bg);
+    color: var(--color-text);
   }
 }

@@ -1,6 +1,7 @@
 // 倒计时卡片：实时更新的天/时/分/秒显示
 import { useState, useEffect } from 'react';
 import type { Countdown } from '../../types';
+import { ReplySection } from '../../components/ReplySection';
 import { calcCountdown } from '../../utils/date';
 
 interface Props { item: Countdown; onDelete: () => void; }
@@ -27,6 +28,7 @@ export function CountdownCard({ item, onDelete }: Props) {
         </div>
       )}
       <p className="text-xs text-gray-400 mt-3">{new Date(item.targetDate).toLocaleDateString('zh-CN')}</p>
+      <ReplySection targetType="countdown" targetId={item.id} />
     </div>
   );
 }

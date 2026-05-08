@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useMoods, useCreateMood, useDeleteMood } from '../../hooks/useMood';
 import { useToast } from '../../components/Toast';
 import { PageHeader } from '../../components/PageHeader';
+import { ReplySection } from '../../components/ReplySection';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/LoadingState';
 import { MOOD_EMOJIS, type MoodType } from '../../types';
@@ -64,6 +65,7 @@ export function MoodPage() {
                   </div>
                 </div>
                 <p className="text-gray-700">{mood.content}</p>
+                <ReplySection targetType="mood" targetId={mood.id} />
               </div>
             ))}
           </div>

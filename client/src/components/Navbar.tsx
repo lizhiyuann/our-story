@@ -1,7 +1,8 @@
-// 导航栏组件：桌面端横向菜单 + 移动端汉堡菜单
+// 导航栏组件：桌面端横向菜单 + 移动端汉堡菜单 + 主题切换
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';
+import { ThemeSwitcher } from './ThemeSwitcher';
 
 const NAV_ITEMS = [
   { to: '/', label: '首页', icon: '🏠' },
@@ -18,9 +19,9 @@ export function Navbar() {
   const logout = useAuthStore((s) => s.logout);
 
   return (
-    <nav className="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-40">
+    <nav className="fixed top-0 w-full bg-[var(--color-card)]/95 backdrop-blur-sm shadow-sm z-40">
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
-        <NavLink to="/" className="text-xl font-bold text-primary">
+        <NavLink to="/" className="text-xl font-bold text-[var(--color-primary)]">
           ❤️ My Love
         </NavLink>
 
@@ -32,7 +33,9 @@ export function Navbar() {
                 end={item.to === '/'}
                 className={({ isActive }) =>
                   `flex items-center gap-1.5 px-3 py-2 rounded-card text-sm transition-colors ${
-                    isActive ? 'bg-primary text-white' : 'text-gray-600 hover:bg-pink-50'
+                    isActive
+                      ? 'bg-[var(--color-primary)] text-white'
+                      : 'text-[var(--color-text-light)] hover:bg-[var(--color-bg)]'
                   }`
                 }
               >
@@ -43,14 +46,15 @@ export function Navbar() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <ThemeSwitcher />
           {user && (
-            <span className="hidden sm:inline text-sm text-gray-500">
+            <span className="hidden sm:inline text-sm text-[var(--color-text-muted)]">
               {user.displayName}
             </span>
           )}
           {user && (
-            <button onClick={logout} className="text-sm text-gray-400 hover:text-red-500 transition-colors">
+            <button onClick={logout} className="text-sm text-[var(--color-text-muted)] hover:text-red-500 transition-colors">
               退出
             </button>
           )}
@@ -66,7 +70,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <ul className="md:hidden bg-white border-t list-none animate-fade-in">
+        <ul className="md:hidden bg-[var(--color-card)] border-t border-[var(--color-border)] list-none animate-fade-in">
           {NAV_ITEMS.map((item) => (
             <li key={item.to}>
               <NavLink
@@ -75,7 +79,9 @@ export function Navbar() {
                 onClick={() => setOpen(false)}
                 className={({ isActive }) =>
                   `flex items-center gap-2 px-6 py-3 transition-colors ${
-                    isActive ? 'bg-primary text-white' : 'text-gray-600 hover:bg-pink-50'
+                    isActive
+                      ? 'bg-[var(--color-primary)] text-white'
+                      : 'text-[var(--color-text-light)] hover:bg-[var(--color-bg)]'
                   }`
                 }
               >

@@ -1,0 +1,69 @@
+/* 主题系统：4 套主题风格，通过 data-theme 属性切换 */
+
+/* 💕 浪漫粉（默认） */
+[data-theme="pink"] {
+  --color-primary: #ff6b9d;
+  --color-primary-dark: #e55a8a;
+  --color-primary-light: #ff9ff3;
+  --color-bg: #fff5f7;
+  --color-bg-alt: #fff0f3;
+  --color-card: #ffffff;
+  --color-text: #333333;
+  --color-text-light: #666666;
+  --color-text-muted: #999999;
+  --color-border: #ffd6e0;
+  --color-shadow: rgba(255, 107, 157, 0.1);
+  --color-shadow-lg: rgba(255, 107, 157, 0.2);
+  --color-accent: #ff9ff3;
+}
+
+/* 🌊 清新蓝 */
+[data-theme="blue"] {
+  --color-primary: #4A90D9;
+  --color-primary-dark: #3a7bc8;
+  --color-primary-light: #7ab8f5;
+  --color-bg: #f0f7ff;
+  --color-bg-alt: #e8f2ff;
+  --color-card: #ffffff;
+  --color-text: #2c3e50;
+  --color-text-light: #5a6c7d;
+  --color-text-muted: #8e9eaf;
+  --color-border: #b8d4f0;
+  --color-shadow: rgba(74, 144, 217, 0.1);
+  --color-shadow-lg: rgba(74, 144, 217, 0.2);
+  --color-accent: #7ab8f5;
+}
+
+/* 🌙 暗夜紫 */
+[data-theme="dark"] {
+  --color-primary: #a78bfa;
+  --color-primary-dark: #8b5cf6;
+  --color-primary-light: #c4b5fd;
+  --color-bg: #1a1024;
+  --color-bg-alt: #221533;
+  --color-card: #2d1f3d;
+  --color-text: #e2d9f3;
+  --color-text-light: #b8a9d4;
+  --color-text-muted: #8b7ba8;
+  --color-border: #3d2d52;
+  --color-shadow: rgba(167, 139, 250, 0.15);
+  --color-shadow-lg: rgba(167, 139, 250, 0.25);
+  --color-accent: #c4b5fd;
+}
+
+/* 🌿 自然绿 */
+[data-theme="green"] {
+  --color-primary: #10b981;
+  --color-primary-dark: #059669;
+  --color-primary-light: #6ee7b7;
+  --color-bg: #f0fdf4;
+  --color-bg-alt: #e8faf0;
+  --color-card: #ffffff;
+  --color-text: #1a2e1a;
+  --color-text-light: #4a6a4a;
+  --color-text-muted: #7a9a7a;
+  --color-border: #a7f3d0;
+  --color-shadow: rgba(16, 185, 129, 0.1);
+  --color-shadow-lg: rgba(16, 185, 129, 0.2);
+  --color-accent: #6ee7b7;
+}

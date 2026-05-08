@@ -15,6 +15,7 @@ import { timelineRoutes } from './routes/timeline.routes.js';
 import { photoRoutes } from './routes/photo.routes.js';
 import { chatRoutes } from './routes/chat.routes.js';
 import { configRoutes } from './routes/config.routes.js';
+import { replyRoutes } from './routes/reply.routes.js';
 import { AppError } from './utils/errors.js';
 import { fail } from './utils/response.js';
 
@@ -49,6 +50,7 @@ await app.register(timelineRoutes);
 await app.register(photoRoutes);
 await app.register(chatRoutes);
 await app.register(configRoutes);
+await app.register(replyRoutes);
 
 // Health check
 app.get('/api/health', async () => ({ status: 'ok', timestamp: new Date().toISOString() }));

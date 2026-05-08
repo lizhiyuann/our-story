@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useTimeline, useCreateTimelineEvent, useDeleteTimelineEvent } from '../../hooks/useTimeline';
 import { useToast } from '../../components/Toast';
 import { PageHeader } from '../../components/PageHeader';
+import { ReplySection } from '../../components/ReplySection';
 import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/LoadingState';
 
@@ -69,6 +70,7 @@ export function TimelinePage() {
                     </div>
                     <h4 className="font-semibold text-gray-800 mb-1">{event.title}</h4>
                     {event.description && <p className="text-sm text-gray-500">{event.description}</p>}
+                    <ReplySection targetType="timeline" targetId={event.id} />
                   </div>
                 </div>
               ))}
