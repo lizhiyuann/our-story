@@ -1,46 +1,155 @@
 {
-  "model": "claude-sonnet-4-20250514",
-  "maxTokens": 600,
-  "shortTermWindow": 20,
-  "longTermMaxResults": 5,
+  "_comment": "AI Agent 配置 - 模型、记忆、技能、人格、回复模板",
+
+  "provider": "anthropic",
+
+  "providers": {
+    "anthropic": {
+      "_comment": "Anthropic Claude 系列",
+      "envKey": "ANTHROPIC_API_KEY",
+      "baseUrl": "https://api.anthropic.com",
+      "defaultModel": "claude-sonnet-4-20250514",
+      "models": {
+        "claude-opus-4-7":     { "maxTokens": 4096, "description": "最强推理，适合复杂任务" },
+        "claude-sonnet-4-6":   { "maxTokens": 8192, "description": "性价比最高，推荐日常使用" },
+        "claude-haiku-4-5":    { "maxTokens": 8192, "description": "最快最便宜，适合简单对话" }
+      }
+    },
+    "openai": {
+      "_comment": "OpenAI GPT 系列",
+      "envKey": "OPENAI_API_KEY",
+      "baseUrl": "https://api.openai.com/v1",
+      "defaultModel": "gpt-4o",
+      "models": {
+        "gpt-4o":             { "maxTokens": 4096, "description": "多模态旗舰" },
+        "gpt-4o-mini":        { "maxTokens": 4096, "description": "轻量快速" },
+        "gpt-4-turbo":        { "maxTokens": 4096, "description": "上一代旗舰" }
+      }
+    },
+    "xiaomi": {
+      "_comment": "小米 MiLM 大模型（通过小米云 API）",
+      "envKey": "XIAOMI_API_KEY",
+      "baseUrl": "https://api.xiaomi.com/v1",
+      "defaultModel": "milm-large",
+      "models": {
+        "milm-large":         { "maxTokens": 4096, "description": "小米大模型，中文能力强" },
+        "milm-medium":        { "maxTokens": 4096, "description": "小米中等模型，速度快" },
+        "milm-small":         { "maxTokens": 2048, "description": "小米轻量模型，最快速" }
+      }
+    },
+    "deepseek": {
+      "_comment": "DeepSeek 深度求索系列，性价比极高",
+      "envKey": "DEEPSEEK_API_KEY",
+      "baseUrl": "https://api.deepseek.com/v1",
+      "defaultModel": "deepseek-chat",
+      "models": {
+        "deepseek-chat":      { "maxTokens": 4096, "description": "通用对话" },
+        "deepseek-reasoner":  { "maxTokens": 8192, "description": "深度推理" }
+      }
+    },
+    "qwen": {
+      "_comment": "阿里通义千问系列",
+      "envKey": "DASHSCOPE_API_KEY",
+      "baseUrl": "https://dashscope.aliyuncs.com/compatible-mode/v1",
+      "defaultModel": "qwen-plus",
+      "models": {
+        "qwen-max":           { "maxTokens": 6144, "description": "最强千问" },
+        "qwen-plus":          { "maxTokens": 6144, "description": "均衡版" },
+        "qwen-turbo":         { "maxTokens": 6144, "description": "快速版" }
+      }
+    },
+    "zhipu": {
+      "_comment": "智谱 GLM 系列",
+      "envKey": "ZHIPU_API_KEY",
+      "baseUrl": "https://open.bigmodel.cn/api/paas/v4",
+      "defaultModel": "glm-4-plus",
+      "models": {
+        "glm-4-plus":         { "maxTokens": 4096, "description": "旗舰版" },
+        "glm-4-flash":        { "maxTokens": 4096, "description": "快速版" }
+      }
+    },
+    "moonshot": {
+      "_comment": "月之暗面 Kimi 系列，长上下文能力强",
+      "envKey": "MOONSHOT_API_KEY",
+      "baseUrl": "https://api.moonshot.cn/v1",
+      "defaultModel": "moonshot-v1-8k",
+      "models": {
+        "moonshot-v1-128k":   { "maxTokens": 4096, "description": "超长上下文" },
+        "moonshot-v1-32k":    { "maxTokens": 4096, "description": "长上下文" },
+        "moonshot-v1-8k":     { "maxTokens": 4096, "description": "标准版" }
+      }
+    },
+    "baidu": {
+      "_comment": "百度文心一言系列",
+      "envKey": "BAIDU_API_KEY",
+      "secretKey": "BAIDU_SECRET_KEY",
+      "baseUrl": "https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/chat",
+      "defaultModel": "ernie-4.0-8k",
+      "models": {
+        "ernie-4.0-8k":       { "maxTokens": 4096, "description": "文心 4.0" },
+        "ernie-3.5-8k":       { "maxTokens": 4096, "description": "文心 3.5" }
+      }
+    }
+  },
+
+  "defaultMaxTokens": 600,
+
+  "memory": {
+    "_comment": "记忆系统配置",
+    "shortTermWindow": 20,
+    "longTermMaxResults": 5,
+    "summarizeThreshold": 40
+  },
+
   "personality": {
+    "_comment": "人格参数默认值（0.0-1.0），会随用户交互自适应调整",
     "defaults": {
-      "warmth": 0.8,
-      "humor": 0.6,
-      "formality": 0.2,
-      "emojiFrequency": 0.7,
-      "responseLength": 0.5,
-      "proactivity": 0.6
+      "warmth":          0.8,
+      "humor":           0.6,
+      "formality":       0.2,
+      "emojiFrequency":  0.7,
+      "responseLength":  0.5,
+      "proactivity":     0.6
     },
     "adaptation": {
+      "_comment": "自适应调整步长和范围",
       "stepSize": 0.02,
       "minValue": 0.1,
       "maxValue": 1.0
     }
   },
+
   "skills": {
+    "_comment": "技能模块配置：关键词和最低触发分数",
     "emotionSupport": {
+      "_comment": "情绪支持：检测负面情绪，提供共情安慰",
       "keywords": ["难过", "伤心", "哭", "生气", "烦", "累", "焦虑", "压力", "害怕", "孤独", "委屈", "崩溃", "失落", "郁闷"],
       "minScore": 0.5
     },
     "moodAnalyst": {
+      "_comment": "心情分析：分析情绪模式和规律",
       "keywords": ["心情", "情绪", "最近怎么样", "状态", "开心吗", "难过吗"],
       "minScore": 0.5
     },
     "datePlanner": {
+      "_comment": "约会规划：建议活动，创建倒计时",
       "keywords": ["约会", "出去玩", "做什么", "周末", "无聊", "计划", "安排", "玩什么", "吃什么"],
       "minScore": 0.5
     },
     "memoryKeeper": {
+      "_comment": "记忆守护：记录重要时刻，关联过去记忆",
       "keywords": ["记住", "纪念", "第一次", "重要", "特别", "里程碑", "今天"],
       "minScore": 0.4
     },
     "giftAdvisor": {
+      "_comment": "礼物建议：基于偏好推荐礼物",
       "keywords": ["礼物", "送什么", "生日", "节日", "惊喜", "情人节", "圣诞", "纪念日礼物"],
       "minScore": 0.5
     }
   },
+
   "fallbackResponses": {
+    "_comment": "无 API Key 时的降级回复模板",
     "你好": ["你好呀！今天也要开心哦~ 💕", "嗨！想我了吗？🥰"],
     "爱你": ["我也爱你！超级超级爱你！❤️❤️❤️", "爱你哦！永远爱你！💕"],
     "想你": ["我也好想你呀！🥺", "每时每刻都在想你！"],
@@ -50,6 +159,7 @@
     "早安": ["早安宝贝！今天也要元气满满哦！☀️"],
     "晚安": ["晚安宝贝！做个好梦~ 🌙"]
   },
+
   "defaultReplies": [
     "嗯嗯，我在听呢~ 继续说！",
     "我在呢！随时都在~ 💕",

@@ -1,9 +1,15 @@
-"""LangGraph agent assembly."""
+"""
+LangGraph agent assembly with multi-provider LLM support.
+
+Supports: Anthropic, OpenAI, Xiaomi, DeepSeek, Qwen, Zhipu, Moonshot, Baidu
+All providers use LangChain's unified ChatModel interface via langchain-openai
+(OpenAI-compatible API) or langchain-anthropic.
+"""
 
 from __future__ import annotations
 import time
+import random
 from langgraph.graph import StateGraph, START, END
-from langchain_anthropic import ChatAnthropic
 
 from logger import get_logger, log_event, request_id_var, user_id_var
 from config import cfg
@@ -18,15 +24,44 @@ from evolution import ConversationTracker, PreferenceLearner, PersonalityAdapter
 logger = get_logger("agent.graph")
 
 
+def _create_llm():
+    """
+    Create a LangChain ChatModel based on the configured provider.
+
+    Most providers expose OpenAI-compatible APIs, so we use ChatOpenAI.
+    Anthropic uses ChatAnthropic.
+    """
+    provider = cfg.provider_name
+    model = cfg.model
+    api_key = cfg.api_key
+    base_url = cfg.base_url
+    max_tokens = cfg.max_tokens
+
+    log_event(logger, 20, "agent.llm.init", provider=provider, model=model, base_url=base_url)
+
+    if provider == "anthropic":
+        from langchain_anthropic import ChatAnthropic
+        return ChatAnthropic(
+            model=model,
+            anthropic_api_key=api_key,
+            max_tokens=max_tokens,
+        )
+
+    # All other providers use OpenAI-compatible API
+    from langchain_openai import ChatOpenAI
+    return ChatOpenAI(
+        model=model,
+        api_key=api_key,
+        base_url=base_url,
+        max_tokens=max_tokens,
+    )
+
+
 class LoveAgent:
-    """The main agent that orchestrates everything."""
+    """The main agent that orchestrates memory, skills, tools, and evolution."""
 
     def __init__(self):
-        self.llm = ChatAnthropic(
-            model=cfg.model,
-            anthropic_api_key=cfg.anthropic_api_key,
-            max_tokens=cfg.max_tokens,
-        )
+        self.llm = _create_llm()
         self.long_term = LongTermMemory(persist_dir=cfg.chroma_persist_dir)
         self.short_term = ShortTermMemory(window_size=cfg.short_term_window)
         self.personality = PersonalityAdapter()
@@ -34,9 +69,14 @@ class LoveAgent:
         self.pref_learner = PreferenceLearner(self.long_term)
         self.graph = self._build_graph()
 
-        log_event(logger, 20, "agent.initialized", model=cfg.model, skills=len(ALL_SKILLS), tools=len(ALL_TOOLS))
+        log_event(
+            logger, 20, "agent.initialized",
+            provider=cfg.provider_name, model=cfg.model,
+            skills=len(ALL_SKILLS), tools=len(ALL_TOOLS),
+        )
 
     def _build_graph(self):
+        """Assemble the LangGraph state machine."""
         deps = {
             "llm": self.llm,
             "long_term": self.long_term,
@@ -51,10 +91,10 @@ class LoveAgent:
         }
 
         async def load_context_node(state: AgentState) -> dict:
+            """Load working memory: moods, countdowns, long-term memories."""
             from tools.base import ApiClient
             api = ApiClient(cfg.api_base_url, state["user_id"])
             deps["api"] = api
-            # Set tool context
             memory_tools.set_context(self.long_term, api)
             mood_tools.set_context(api)
             countdown_tools.set_context(api)
@@ -63,17 +103,22 @@ class LoveAgent:
             return await nodes.load_context(state, deps)
 
         async def think_node(state: AgentState) -> dict:
+            """LLM reasoning with optional tool calls."""
             return await nodes.think(state, deps)
 
         async def execute_tools_node(state: AgentState) -> dict:
+            """Execute tool calls requested by the LLM."""
             return await nodes.execute_tools(state, deps)
 
         async def reflect_node(state: AgentState) -> dict:
+            """Evaluate reply quality."""
             return await nodes.reflect(state, deps)
 
         async def evolve_node(state: AgentState) -> dict:
+            """Self-evolution: learn preferences, adapt personality."""
             return await nodes.evolve(state, deps)
 
+        # Build the graph
         g = StateGraph(AgentState)
         g.add_node("load_context", load_context_node)
         g.add_node("route_skill", nodes.route_skill)
@@ -96,19 +141,18 @@ class LoveAgent:
         return g.compile()
 
     async def chat(self, request_id: str, user_id: int, message: str) -> str:
-        """Process a user message and return the agent's reply."""
+        """Process a user message through the full agent pipeline."""
         request_id_var.set(request_id)
         user_id_var.set(user_id)
 
         log_event(logger, 20, "agent.request.start", request_id=request_id, user_id=user_id)
         start = time.monotonic()
 
-        # Add to short-term memory
+        # Add user message to short-term memory
         self.short_term.add_message(user_id, "user", message)
-
-        # Get conversation history
         messages = self.short_term.get_messages(user_id)
 
+        # Build initial state
         initial_state: AgentState = {
             "user_id": user_id,
             "user_message": message,
@@ -126,12 +170,12 @@ class LoveAgent:
 
         try:
             result = await self.graph.ainvoke(initial_state)
-            reply = result.get("reply", "") or "嗯嗯，我在听呢~ 💕"
+            reply = result.get("reply", "") or self._fallback(message)
         except Exception as exc:
             log_event(logger, 40, "agent.request.error", error=str(exc))
             reply = self._fallback(message)
 
-        # Save to short-term memory
+        # Save assistant reply to short-term memory
         self.short_term.add_message(user_id, "assistant", reply)
         await self.short_term.maybe_summarize(user_id, self.llm)
 
@@ -145,9 +189,12 @@ class LoveAgent:
         return reply
 
     def _fallback(self, message: str) -> str:
-        import random
-        defaults = ["嗯嗯，我在听呢~ 💕", "我在呢！随时都在~", "好的好的！还有什么想说的吗？"]
-        return random.choice(defaults)
+        """Keyword-based fallback when LLM is unavailable."""
+        fallbacks = cfg.fallback_responses
+        for keyword, replies in fallbacks.items():
+            if keyword in message:
+                return random.choice(replies)
+        return random.choice(cfg.default_replies)
 
 
 # Singleton
@@ -155,6 +202,7 @@ _agent: LoveAgent | None = None
 
 
 def get_agent() -> LoveAgent:
+    """Get or create the agent singleton."""
     global _agent
     if _agent is None:
         _agent = LoveAgent()
