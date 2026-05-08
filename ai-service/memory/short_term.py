@@ -29,6 +29,12 @@ class ShortTermMemory:
         if len(self._conversations[user_id]) > self._window_size * 2:
             self._conversations[user_id] = self._conversations[user_id][-self._window_size:]
 
+    def clear(self, user_id: int) -> None:
+        """清空指定用户的对话历史和摘要。"""
+        self._conversations.pop(user_id, None)
+        self._summaries.pop(user_id, None)
+        log_event(logger, 20, "memory.short_term.cleared", user_id=user_id)
+
     async def maybe_summarize(self, user_id: int, llm) -> None:
         """Summarize old messages if conversation is long."""
         msgs = self._conversations.get(user_id, [])

@@ -202,6 +202,59 @@ class LoveAgent:
         )
         return reply
 
+    async def chat_stream(self, request_id: str, user_id: int, message: str):
+        """流式处理用户消息，逐块 yield 回复内容。"""
+        request_id_var.set(request_id)
+        user_id_var.set(user_id)
+
+        log_event(logger, 20, "agent.stream.start", 请求ID=request_id, 用户ID=user_id)
+        start = time.monotonic()
+
+        self.short_term.add_message(user_id, "user", message)
+        full_reply = ""
+
+        # 无 LLM 时降级
+        if not self.llm:
+            reply = self._fallback(message)
+            for char in reply:
+                full_reply += char
+                yield char
+            self.short_term.add_message(user_id, "assistant", full_reply)
+            return
+
+        # 构建消息
+        from langchain_core.messages import SystemMessage, HumanMessage, AIMessage
+        from .prompts import build_system_prompt
+
+        messages = self.short_term.get_messages(user_id)
+        personality = self.personality.format_for_prompt(user_id)
+
+        system_prompt = build_system_prompt(personality_instructions=personality)
+        lc_messages = [SystemMessage(content=system_prompt)]
+        for m in messages:
+            if m["role"] == "user":
+                lc_messages.append(HumanMessage(content=m["content"]))
+            else:
+                lc_messages.append(AIMessage(content=m["content"]))
+
+        # 流式调用 LLM
+        try:
+            async for chunk in self.llm.astream(lc_messages):
+                if chunk.content:
+                    full_reply += chunk.content
+                    yield chunk.content
+        except Exception as exc:
+            log_event(logger, 40, "agent.stream.error", 错误=str(exc))
+            fallback = self._fallback(message)
+            for char in fallback:
+                full_reply += char
+                yield char
+
+        # 保存到短期记忆
+        self.short_term.add_message(user_id, "assistant", full_reply)
+        elapsed = int((time.monotonic() - start) * 1000)
+        log_event(logger, 20, "agent.stream.done", 请求ID=request_id, 总耗时ms=elapsed, 回复长度=len(full_reply))
+
     def _fallback(self, message: str) -> str:
         """无大模型时的关键词降级回复。"""
         fallbacks = cfg.fallback_responses

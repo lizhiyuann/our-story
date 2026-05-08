@@ -1,50 +1,92 @@
-// AI 服务：调用 Python Agent 处理聊天
+// AI 服务：调用 Python Agent 处理聊天（支持流式输出）
 import { desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL ?? 'http://ai-service:8000';
 
+/** 非流式聊天 */
 export async function chat(userId: number, message: string): Promise<string> {
   const db = getDb();
-
-  // Save user message
   await db.insert(schema.chatMessages).values({ userId, role: 'user', content: message });
 
-  // Get recent history for context
-  const history = await db.select().from(schema.chatMessages)
-    .where(eq(schema.chatMessages.userId, userId))
-    .orderBy(desc(schema.chatMessages.createdAt))
-    .limit(20);
-
-  history.reverse();
-
   let reply: string;
-
   try {
     const res = await fetch(`${AI_SERVICE_URL}/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        message,
-        user_id: userId,
-        history: history.map(m => ({ role: m.role, content: m.content })),
-      }),
-      signal: AbortSignal.timeout(60_000),
+      body: JSON.stringify({ message, user_id: userId }),
+      signal: AbortSignal.timeout(90_000),
     });
-
     if (!res.ok) throw new Error(`AI service returned ${res.status}`);
-
-    const data = await res.json() as { reply: string; source: string };
+    const data = await res.json() as { reply: string };
     reply = data.reply;
   } catch (error) {
     console.error('AI service error:', error);
     reply = getFallbackResponse(message);
   }
 
-  // Save assistant reply
   await db.insert(schema.chatMessages).values({ userId, role: 'assistant', content: reply });
-
   return reply;
+}
+
+/** 流式聊天：逐块 yield 回复内容 */
+export async function* chatStream(userId: number, message: string): AsyncGenerator<{ text: string; done: boolean }> {
+  const db = getDb();
+  await db.insert(schema.chatMessages).values({ userId, role: 'user', content: message });
+
+  let fullReply = '';
+
+  try {
+    const res = await fetch(`${AI_SERVICE_URL}/chat/stream`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message, user_id: userId }),
+      signal: AbortSignal.timeout(90_000),
+    });
+
+    if (!res.ok || !res.body) {
+      throw new Error(`AI service returned ${res.status}`);
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() ?? '';
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+          if (data.text) fullReply += data.text;
+          yield { text: data.text ?? '', done: !!data.done };
+          if (data.done) break;
+        } catch { /* skip malformed lines */ }
+      }
+    }
+  } catch (error) {
+    console.error('AI stream error:', error);
+    const fallback = getFallbackResponse(message);
+    fullReply = fallback;
+    yield { text: fallback, done: true };
+  }
+
+  // 保存完整回复
+  if (fullReply) {
+    await db.insert(schema.chatMessages).values({ userId, role: 'assistant', content: fullReply });
+  }
+}
+
+/** 清空用户聊天历史 */
+export async function clearChatHistory(userId: number): Promise<void> {
+  const db = getDb();
+  await db.delete(schema.chatMessages).where(eq(schema.chatMessages.userId, userId));
 }
 
 export async function getChatHistory(userId: number, limit = 50) {
@@ -53,7 +95,6 @@ export async function getChatHistory(userId: number, limit = 50) {
     .where(eq(schema.chatMessages.userId, userId))
     .orderBy(desc(schema.chatMessages.createdAt))
     .limit(limit);
-
   messages.reverse();
   return messages;
 }
@@ -70,12 +111,8 @@ function getFallbackResponse(message: string): string {
     '晚安': ['晚安宝贝！做个好梦~ 🌙'],
   };
   const defaults = ['嗯嗯，我在听呢~ 继续说！', '我在呢！随时都在~ 💕', '好的好的！还有什么想说的吗？'];
-
-  const msg = message.toLowerCase();
   for (const [keyword, replies] of Object.entries(fallbacks)) {
-    if (msg.includes(keyword)) {
-      return replies[Math.floor(Math.random() * replies.length)];
-    }
+    if (message.includes(keyword)) return replies[Math.floor(Math.random() * replies.length)];
   }
   return defaults[Math.floor(Math.random() * defaults.length)];
 }
