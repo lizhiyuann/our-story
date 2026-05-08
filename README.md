@@ -105,11 +105,32 @@ git clone https://github.com/your-username/our-story.git
 cd our-story
 ```
 
-### 2. 配置环境变量
+### 2. 一键启动
 
 ```bash
-cp .env.example .env
+./start.sh
 ```
+
+脚本会自动：
+- 检查并创建 `.env` 文件（首次运行）
+- 检查 Docker 是否安装
+- 启动所有服务（数据库 + 后端 + AI Agent + 前端 + Nginx）
+
+启动后访问 **http://localhost**。
+
+> **手动启动**（不用脚本）：
+> ```bash
+> cp .env.example .env   # 编辑密码和 API Key
+> docker compose up -d   # 启动所有服务
+> ```
+
+### 3. 停止服务
+
+```bash
+./stop.sh
+```
+
+### 4. 配置环境变量
 
 编辑 `.env`，**必须修改的配置**：
 
@@ -125,22 +146,6 @@ JWT_SECRET=your-random-secret-key-at-least-16-chars
 LLM_PROVIDER=deepseek
 DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
 ```
-
-### 3. 启动服务
-
-```bash
-docker compose up -d
-```
-
-首次启动会自动：
-- 拉取镜像（PostgreSQL、Nginx、Node.js、Python）
-- 构建前后端应用
-- 创建数据库表
-- 初始化两个用户账号
-
-### 4. 访问
-
-打开浏览器访问 **http://localhost**（Nginx 入口）。
 
 ---
 
@@ -183,27 +188,24 @@ nginx:
 如果需要修改代码，建议本地开发（热更新）：
 
 ```bash
+# 一键启动（自动启动数据库 + AI Agent + 后端 + 前端）
+./dev.sh
+```
+
+或手动分别启动：
+
+```bash
 # 终端 1：启动数据库
 docker compose up db -d
 
 # 终端 2：启动 AI Agent
-cd ai-service
-pip install -r requirements.txt
-python app.py
-# → http://localhost:8000
+cd ai-service && pip install -r requirements.txt && python app.py
 
 # 终端 3：启动后端
-cd server
-npm install
-npm run db:push    # 首次需要创建表
-npm run dev
-# → http://localhost:3001
+cd server && npm install && npm run db:push && npm run dev
 
 # 终端 4：启动前端
-cd client
-npm install
-npm run dev
-# → http://localhost:3000
+cd client && npm install && npm run dev
 ```
 
 前端 Vite 已配置代理，`/api` 请求自动转发到 `localhost:3001`。
