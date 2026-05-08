@@ -7,11 +7,12 @@ type FurnitureKey = 'bed' | 'food' | 'water';
 interface Pos { x: number; y: number; }
 
 const STATE_DURATIONS: Record<CatState, number> = {
-  idle: 5000, walking: 6000, sleeping: 8000,
-  eating: 4000, drinking: 3000, cute: 4000, petting: 0,
+  idle: 8000, walking: 10000, sleeping: 10000,
+  eating: 5000, drinking: 3500, cute: 5000, petting: 0,
 };
-const WALK_SPEED = 0.4;
-const MOVE_INTERVAL = 50;
+const WALK_SPEED_SLOW = 0.12;   // 慢悠悠（大部分时间）
+const WALK_SPEED_BURST = 0.6;   // 偶尔冲刺
+const MOVE_INTERVAL = 60;
 const CUTE_MSGS = ['喵~ 摸摸我', '咕噜咕噜~', '蹭蹭你 ❤️', '要抱抱！', '想吃小鱼干~', '陪我玩嘛~'];
 const PET_MSGS = ['咕噜咕噜~ 好舒服', '喵~ 再摸摸', '呼~ 开心！', '蹭蹭你的手 ❤️', '最喜欢你了！'];
 const POS_KEY = 'our-story-cat-pos';
@@ -171,24 +172,31 @@ export function CatPet() {
   }, []);
 
   const pickNext = useCallback(() => {
-    if (isPetting) return;
+    if (isPetting || isDraggingCat.current) return;
     const r = Math.random();
-    if (r < 0.15) { setCatPos(bed.pos); setCatState('sleeping'); showBubble('Zzz... 💤', 8000); stateTimerRef.current = setTimeout(pickNext, 8000); }
-    else if (r < 0.25) { setCatPos(food.pos); setCatState('eating'); showBubble('好吃~ 😋', 3500); stateTimerRef.current = setTimeout(pickNext, 4000); }
-    else if (r < 0.32) { setCatPos(water.pos); setCatState('drinking'); showBubble('咕嘟咕嘟~', 2500); stateTimerRef.current = setTimeout(pickNext, 3000); }
-    else { const s = pick(['idle', 'walking', 'walking', 'cute', 'idle'] as CatState[]); setCatState(s); if (s === 'cute') showBubble(pick(CUTE_MSGS), 3500); stateTimerRef.current = setTimeout(pickNext, STATE_DURATIONS[s]); }
+    if (r < 0.15) { setCatPos(bed.pos); setCatState('sleeping'); showBubble('Zzz... 💤', 8000); stateTimerRef.current = setTimeout(pickNext, 10000); }
+    else if (r < 0.25) { setCatPos(food.pos); setCatState('eating'); showBubble('好吃~ 😋', 4000); stateTimerRef.current = setTimeout(pickNext, 5000); }
+    else if (r < 0.32) { setCatPos(water.pos); setCatState('drinking'); showBubble('咕嘟咕嘟~', 2500); stateTimerRef.current = setTimeout(pickNext, 3500); }
+    else { const s = pick(['idle', 'idle', 'walking', 'walking', 'cute'] as CatState[]); setCatState(s); if (s === 'cute') showBubble(pick(CUTE_MSGS), 4000); stateTimerRef.current = setTimeout(pickNext, STATE_DURATIONS[s]); }
   }, [isPetting, showBubble, bed.pos, food.pos, water.pos]);
 
-  // 移动
+  // 移动（慢悠悠为主，偶尔冲刺）
+  const burstRef = useRef(false);
   useEffect(() => {
     if (catState !== 'walking') return;
+    // 偶尔冲刺（20% 概率，持续 2-3 秒）
+    const isBurst = Math.random() < 0.2;
+    burstRef.current = isBurst;
+    if (isBurst) setTimeout(() => { burstRef.current = false; }, 2000 + Math.random() * 1000);
+
     moveTimerRef.current = setInterval(() => {
       setCatPos((prev) => {
-        let nx = prev.x + WALK_SPEED * dir;
+        const speed = burstRef.current ? WALK_SPEED_BURST : WALK_SPEED_SLOW;
+        let nx = prev.x + speed * dir;
         if (nx < 20 || nx > window.innerWidth - 60) { setDir((d) => -d); nx = prev.x; }
-        if (Math.random() < 0.01) setDir((d) => -d);
+        if (Math.random() < 0.005) setDir((d) => -d);
         let ny = prev.y;
-        if (Math.random() < 0.02) { ny = prev.y + (Math.random() - 0.5) * 20; ny = Math.max(window.innerHeight * 0.4, Math.min(window.innerHeight - 80, ny)); }
+        if (Math.random() < 0.01) { ny = prev.y + (Math.random() - 0.5) * 15; ny = Math.max(window.innerHeight * 0.4, Math.min(window.innerHeight - 80, ny)); }
         savePos('cat', { x: nx, y: ny });
         return { x: nx, y: ny };
       });
@@ -198,8 +206,44 @@ export function CatPet() {
 
   useEffect(() => { pickNext(); return () => { if (stateTimerRef.current) clearTimeout(stateTimerRef.current); if (moveTimerRef.current) clearInterval(moveTimerRef.current); }; }, []);
 
-  // 抚摸
+  // 猫拖动
+  const isDraggingCat = useRef(false);
+  const catDragRef = useRef<{ sx: number; sy: number; spx: number; spy: number } | null>(null);
+
+  const onCatPointerDown = useCallback((e: React.PointerEvent) => {
+    e.preventDefault();
+    catDragRef.current = { sx: e.clientX, sy: e.clientY, spx: catPos.x, spy: catPos.y };
+    isDraggingCat.current = false;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  }, [catPos]);
+
+  const onCatPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!catDragRef.current) return;
+    const dx = e.clientX - catDragRef.current.sx;
+    const dy = e.clientY - catDragRef.current.sy;
+    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) isDraggingCat.current = true;
+    if (isDraggingCat.current) {
+      const newPos = { x: catDragRef.current.spx + dx, y: catDragRef.current.spy + dy };
+      setCatPos(newPos);
+      savePos('cat', newPos);
+    }
+  }, []);
+
+  const onCatPointerUp = useCallback(() => {
+    const wasDragging = isDraggingCat.current;
+    catDragRef.current = null;
+    isDraggingCat.current = false;
+    if (wasDragging) {
+      // 拖动结束，回到 idle
+      if (stateTimerRef.current) clearTimeout(stateTimerRef.current);
+      setCatState('idle');
+      stateTimerRef.current = setTimeout(pickNext, 3000);
+    }
+  }, [pickNext]);
+
+  // 抚摸（hover，非拖动时）
   const onCatEnter = useCallback(() => {
+    if (isDraggingCat.current) return;
     if (catState === 'sleeping') { showBubble('嗯... 被摸醒了 😿', 1500); setCatState('idle'); if (stateTimerRef.current) clearTimeout(stateTimerRef.current); stateTimerRef.current = setTimeout(pickNext, 5000); return; }
     setIsPetting(true); setCatState('petting'); if (stateTimerRef.current) clearTimeout(stateTimerRef.current);
     showBubble(pick(PET_MSGS), 2000);
@@ -208,6 +252,7 @@ export function CatPet() {
   }, [catState, catPos, showBubble, spawnHeart, pickNext]);
 
   const onCatLeave = useCallback(() => {
+    if (isDraggingCat.current) return;
     setIsPetting(false);
     if (heartIvRef.current) clearInterval(heartIvRef.current);
     setTimeout(pickNext, 800);
@@ -221,9 +266,10 @@ export function CatPet() {
         <Furniture type="water" pos={water.pos} onDown={water.onDown} onMove={water.onMove} onUp={water.onUp} />
       </div>
 
-      <div className="absolute pointer-events-auto cursor-pointer"
-        style={{ left: catPos.x, top: catPos.y, transition: catState === 'walking' ? 'none' : 'left 0.3s, top 0.3s' }}
-        onMouseEnter={onCatEnter} onMouseLeave={onCatLeave} title="金条">
+      <div className="absolute pointer-events-auto cursor-grab active:cursor-grabbing"
+        style={{ left: catPos.x, top: catPos.y, transition: catState === 'walking' ? 'none' : 'left 0.3s, top 0.3s', touchAction: 'none' }}
+        onPointerDown={onCatPointerDown} onPointerMove={onCatPointerMove} onPointerUp={onCatPointerUp}
+        onMouseEnter={onCatEnter} onMouseLeave={onCatLeave} title="金条（可拖动）">
         {bubble && (
           <div className="absolute whitespace-nowrap px-2.5 py-1 rounded-lg text-xs shadow animate-fade-in"
             style={{ bottom: 58, left: '50%', transform: 'translateX(-50%)', background: 'var(--color-card)', color: 'var(--color-text)', border: '1px solid var(--color-border)' }}>
