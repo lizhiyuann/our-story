@@ -1,5 +1,5 @@
 // 倒计时服务：倒计时的 CRUD 操作
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 
 export async function getCountdowns(userId: number) {
@@ -23,7 +23,7 @@ export async function createCountdown(userId: number, input: { title: string; ta
 export async function deleteCountdown(userId: number, id: number) {
   const db = getDb();
   const deleted = await db.delete(schema.countdowns)
-    .where(eq(schema.countdowns.id, id))
+    .where(and(eq(schema.countdowns.id, id), eq(schema.countdowns.userId, userId)))
     .returning();
   return deleted.length > 0;
 }

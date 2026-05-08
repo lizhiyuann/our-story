@@ -1,11 +1,15 @@
 """Node.js 后端 API 的异步 HTTP 客户端。"""
 
 from __future__ import annotations
+import os
 import time
 import httpx
 from logger import get_logger, log_event
 
 logger = get_logger("tools.api")
+
+# Agent 内部调用密钥，必须与后端 AGENT_SECRET 环境变量一致
+_AGENT_SECRET = os.getenv("AGENT_SECRET", "")
 
 
 class ApiClient:
@@ -16,12 +20,7 @@ class ApiClient:
         base_url: API 基础地址（如 http://server:3001）
         user_id:  当前用户 ID（通过 X-Agent-User-Id 头传递）
 
-    支持方法：
-        get():    GET 请求
-        post():   POST 请求
-        delete(): DELETE 请求
-
-    所有请求自动携带 X-Agent-User-Id 头，用于 Node.js 端的认证。
+    所有请求自动携带 X-Agent-User-Id 和 X-Agent-Secret 头，用于认证。
     """
 
     def __init__(self, base_url: str, user_id: int):
@@ -63,7 +62,10 @@ class ApiClient:
                 resp = await client.request(
                     method,
                     url,
-                    headers={"X-Agent-User-Id": str(self.user_id)},
+                    headers={
+                        "X-Agent-User-Id": str(self.user_id),
+                        "X-Agent-Secret": _AGENT_SECRET,
+                    },
                     **kwargs,
                 )
                 elapsed = int((time.monotonic() - start) * 1000)

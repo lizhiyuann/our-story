@@ -1,5 +1,5 @@
 // 吐槽服务：吐槽记录的 CRUD 操作
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 
 export async function getRants(userId: number, page = 1, limit = 20) {
@@ -33,7 +33,7 @@ export async function createRant(userId: number, input: { rantType: string; cont
 export async function deleteRant(userId: number, id: number) {
   const db = getDb();
   const deleted = await db.delete(schema.rants)
-    .where(eq(schema.rants.id, id))
+    .where(and(eq(schema.rants.id, id), eq(schema.rants.userId, userId)))
     .returning();
   return deleted.length > 0;
 }

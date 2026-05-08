@@ -25,7 +25,7 @@ export function Modal({ open, onClose, children }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-card p-6 max-w-2xl w-[90%] max-h-[80vh] overflow-y-auto shadow-xl animate-fade-in"
+        className="relative bg-white rounded-card p-6 max-w-2xl w-[90%] max-h-[80vh] overflow-y-auto shadow-xl animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
         <button

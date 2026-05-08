@@ -14,6 +14,7 @@ const envSchema = z.object({
   USER2_DISPLAY_NAME: z.string().default('亲爱的'),
   AI_SERVICE_URL: z.string().url().default('http://ai-service:8000'),
   ANTHROPIC_API_KEY: z.string().optional(),
+  AGENT_SECRET: z.string().default(''),
 });
 
 export type Env = z.infer<typeof envSchema>;

@@ -7,14 +7,10 @@ import { EmptyState } from '../../components/EmptyState';
 import { LoadingState } from '../../components/LoadingState';
 
 const ICONS = [
-  { value: '💕', label: '相爱' },
-  { value: '🎉', label: '庆祝' },
-  { value: '✈️', label: '旅行' },
-  { value: '🍽️', label: '约会' },
-  { value: '🎬', label: '电影' },
-  { value: '🎵', label: '音乐' },
-  { value: '📸', label: '拍照' },
-  { value: '❤️', label: '其他' },
+  { value: '💕', label: '相爱' }, { value: '🎉', label: '庆祝' },
+  { value: '✈️', label: '旅行' }, { value: '🍽️', label: '约会' },
+  { value: '🎬', label: '电影' }, { value: '🎵', label: '音乐' },
+  { value: '📸', label: '拍照' }, { value: '❤️', label: '其他' },
 ];
 
 export function TimelinePage() {
@@ -22,17 +18,17 @@ export function TimelinePage() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [icon, setIcon] = useState('💕');
-  const { data: events, isLoading } = useTimeline();
+  const { data: events, isLoading, isError } = useTimeline();
   const createEvent = useCreateTimelineEvent();
   const deleteEvent = useDeleteTimelineEvent();
   const { showToast } = useToast();
 
   const handleSubmit = () => {
     if (!eventDate || !title.trim()) return showToast('请填写日期和标题！', 'error');
-    createEvent.mutate(
-      { eventDate, title: title.trim(), description: description.trim() || undefined, icon },
-      { onSuccess: () => { setEventDate(''); setTitle(''); setDescription(''); showToast('事件已添加 📅'); }, onError: () => showToast('添加失败', 'error') },
-    );
+    createEvent.mutate({ eventDate, title: title.trim(), description: description.trim() || undefined, icon }, {
+      onSuccess: () => { setEventDate(''); setTitle(''); setDescription(''); showToast('事件已添加 📅'); },
+      onError: () => showToast('添加失败', 'error'),
+    });
   };
 
   const items = events?.data ?? [];
@@ -40,7 +36,6 @@ export function TimelinePage() {
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="📅" title="时间轴" description="记录我们的故事" backTo="/" backLabel="回到首页" />
-
       <div className="grid md:grid-cols-3 gap-8">
         <div className="bg-white rounded-card shadow p-6 md:sticky md:top-20 self-start">
           <h3 className="text-lg font-semibold text-primary mb-4">添加新事件</h3>
@@ -57,11 +52,8 @@ export function TimelinePage() {
           <button onClick={handleSubmit} disabled={createEvent.isPending}
             className="w-full bg-primary text-white py-2.5 rounded-card hover:bg-primary-dark transition-colors disabled:opacity-50">添加事件 📅</button>
         </div>
-
         <div className="md:col-span-2">
-          {isLoading ? <LoadingState /> : items.length === 0 ? (
-            <EmptyState icon="📅" message="还没有事件记录哦~" />
-          ) : (
+          {isLoading ? <LoadingState /> : isError ? <EmptyState icon="⚠️" message="加载失败，请刷新重试" /> : items.length === 0 ? <EmptyState icon="📅" message="还没有事件记录哦~" /> : (
             <div className="relative pl-8 before:absolute before:left-3 before:top-0 before:bottom-0 before:w-0.5 before:bg-primary">
               {items.map((event) => (
                 <div key={event.id} className="relative mb-8 animate-fade-in">
@@ -72,7 +64,7 @@ export function TimelinePage() {
                         <span className="text-xl">{event.icon}</span>
                         <span className="text-sm font-semibold text-primary">{new Date(event.eventDate).toLocaleDateString('zh-CN')}</span>
                       </div>
-                      <button onClick={() => deleteEvent.mutate(event.id)}
+                      <button onClick={() => { if (window.confirm('确定删除这个事件吗？')) deleteEvent.mutate(event.id); }}
                         className="text-gray-300 hover:text-red-500 transition-colors text-sm opacity-0 group-hover:opacity-100">删除</button>
                     </div>
                     <h4 className="font-semibold text-gray-800 mb-1">{event.title}</h4>

@@ -1,17 +1,25 @@
-// JWT 认证中间件，支持 Agent 内部调用
+// JWT 认证中间件，支持 Agent 内部调用（需携带密钥）
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { UnauthorizedError } from '../utils/errors.js';
 
+// Agent 内部调用密钥，必须与 AI_SERVICE_AGENT_SECRET 环境变量一致
+const AGENT_SECRET = process.env.AGENT_SECRET ?? '';
+
 export async function authGuard(request: FastifyRequest, reply: FastifyReply) {
   try {
-    // Support internal agent calls via X-Agent-User-Id header
+    // 内部 Agent 调用：必须同时携带 User-Id 和 Secret
     const agentUserId = request.headers['x-agent-user-id'];
-    if (agentUserId) {
+    const agentSecret = request.headers['x-agent-secret'];
+    if (agentUserId && agentSecret) {
+      if (!AGENT_SECRET || agentSecret !== AGENT_SECRET) {
+        throw new UnauthorizedError('Invalid agent secret');
+      }
       (request as any).userId = Number(agentUserId);
       (request as any).username = 'agent';
       return;
     }
 
+    // 普通用户：JWT Cookie 认证
     const token = request.cookies.token;
     if (!token) {
       throw new UnauthorizedError();

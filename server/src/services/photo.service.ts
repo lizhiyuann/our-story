@@ -1,12 +1,12 @@
 // 相册服务：照片上传、缩略图生成、删除
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import sharp from 'sharp';
 import { getDb, schema } from '../db/index.js';
 
-const UPLOAD_DIR = '/app/uploads';
-const THUMB_DIR = '/app/uploads/thumbnails';
+const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
+const THUMB_DIR = path.join(process.cwd(), 'uploads', 'thumbnails');
 
 async function ensureDirs() {
   await fs.mkdir(UPLOAD_DIR, { recursive: true });
@@ -65,21 +65,21 @@ export async function getPhotos(userId: number, page = 1, limit = 20) {
 
 export async function deletePhoto(userId: number, id: number) {
   const db = getDb();
-  const [photo] = await db.select().from(schema.photos).where(eq(schema.photos.id, id)).limit(1);
+  const [photo] = await db.select().from(schema.photos)
+    .where(and(eq(schema.photos.id, id), eq(schema.photos.userId, userId))).limit(1);
   if (!photo) return false;
 
-  // Delete files
+  // 先删数据库记录，再清理文件（文件清理失败不影响数据一致性）
+  await db.delete(schema.photos)
+    .where(and(eq(schema.photos.id, id), eq(schema.photos.userId, userId)));
+
   try {
-    const fullPath = path.join('/app', photo.filePath);
-    await fs.unlink(fullPath).catch(() => {});
+    await fs.unlink(path.join(process.cwd(), photo.filePath)).catch(() => {});
     if (photo.thumbnailPath) {
-      const thumbPath = path.join('/app', photo.thumbnailPath);
-      await fs.unlink(thumbPath).catch(() => {});
+      await fs.unlink(path.join(process.cwd(), photo.thumbnailPath)).catch(() => {});
     }
   } catch {
-    // File may already be deleted
+    // 文件可能已被删除，忽略
   }
-
-  await db.delete(schema.photos).where(eq(schema.photos.id, id));
   return true;
 }

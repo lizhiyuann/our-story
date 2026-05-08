@@ -1,5 +1,5 @@
 // 心情服务：心情记录的 CRUD 操作
-import { desc, eq, sql } from 'drizzle-orm';
+import { and, desc, eq, sql } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 
 export async function getMoods(userId: number, page = 1, limit = 20) {
@@ -33,7 +33,7 @@ export async function createMood(userId: number, input: { moodType: string; emoj
 export async function deleteMood(userId: number, id: number) {
   const db = getDb();
   const deleted = await db.delete(schema.moods)
-    .where(eq(schema.moods.id, id) && eq(schema.moods.userId, userId))
+    .where(and(eq(schema.moods.id, id), eq(schema.moods.userId, userId)))
     .returning();
   return deleted.length > 0;
 }

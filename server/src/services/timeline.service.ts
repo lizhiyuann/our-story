@@ -1,5 +1,5 @@
 // 时间轴服务：事件的 CRUD 操作
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 
 export async function getTimeline(userId: number) {
@@ -24,7 +24,7 @@ export async function createTimelineEvent(userId: number, input: { eventDate: st
 export async function deleteTimelineEvent(userId: number, id: number) {
   const db = getDb();
   const deleted = await db.delete(schema.timelineEvents)
-    .where(eq(schema.timelineEvents.id, id))
+    .where(and(eq(schema.timelineEvents.id, id), eq(schema.timelineEvents.userId, userId)))
     .returning();
   return deleted.length > 0;
 }

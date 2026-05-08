@@ -18,20 +18,17 @@ export function RantPage() {
   const [rantType, setRantType] = useState('rant');
   const [content, setContent] = useState('');
   const [intensity, setIntensity] = useState(5);
-  const { data, isLoading } = useRants();
+  const { data, isLoading, isError } = useRants();
   const createRant = useCreateRant();
   const deleteRant = useDeleteRant();
   const { showToast } = useToast();
 
   const handleSubmit = () => {
     if (!content.trim()) return showToast('写点什么再发泄吧！', 'error');
-    createRant.mutate(
-      { rantType, content: content.trim(), intensity },
-      {
-        onSuccess: () => { setContent(''); setIntensity(5); showToast('发泄完毕，心情好多了吧？😤'); },
-        onError: () => showToast('发泄失败', 'error'),
-      },
-    );
+    createRant.mutate({ rantType, content: content.trim(), intensity }, {
+      onSuccess: () => { setContent(''); setIntensity(5); showToast('发泄完毕，心情好多了吧？😤'); },
+      onError: () => showToast('发泄失败', 'error'),
+    });
   };
 
   const rants = data?.data ?? [];
@@ -39,7 +36,6 @@ export function RantPage() {
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="😤" title="吐槽专区" description="不开心就来这里发泄" backTo="/" backLabel="回到首页" />
-
       <div className="grid md:grid-cols-2 gap-8">
         <div className="bg-white rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-red-500 mb-4">有什么不开心的？说出来！</h3>
@@ -63,19 +59,17 @@ export function RantPage() {
             {createRant.isPending ? '发泄中...' : '发泄！🔥'}
           </button>
         </div>
-
         <div className="bg-white rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-red-500 mb-4">发泄记录</h3>
           <div className="max-h-[500px] overflow-y-auto space-y-3">
-            {isLoading ? <LoadingState /> : rants.length === 0 ? (
-              <EmptyState icon="😤" message="还没有吐槽记录哦~" />
-            ) : rants.map((rant) => (
+            {isLoading ? <LoadingState /> : isError ? <EmptyState icon="⚠️" message="加载失败，请刷新重试" /> : rants.length === 0 ? <EmptyState icon="😤" message="还没有吐槽记录哦~" /> : rants.map((rant) => (
               <div key={rant.id} className="bg-red-50 rounded-card p-4 border-l-4 border-red-500 animate-fade-in">
                 <div className="flex justify-between items-center mb-2">
                   <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{RANT_TYPE_NAMES[rant.rantType] ?? rant.rantType}</span>
                   <div className="flex items-center gap-2">
                     <span className="text-xs text-gray-400">{formatRelativeTime(rant.createdAt)}</span>
-                    <button onClick={() => deleteRant.mutate(rant.id)} className="text-gray-300 hover:text-red-500 transition-colors text-sm">删除</button>
+                    <button onClick={() => { if (window.confirm('确定删除这条吐槽吗？')) deleteRant.mutate(rant.id); }}
+                      className="text-gray-300 hover:text-red-500 transition-colors text-sm">删除</button>
                   </div>
                 </div>
                 <p className="text-gray-700 mb-2">{rant.content}</p>

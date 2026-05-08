@@ -1,4 +1,4 @@
-// 相册页面：拖拽上传 + 瀑布流展示 + 大图预览
+// 相册页面：照片上传 + 瀑布流展示 + 大图预览
 import { useState, useRef } from 'react';
 import { usePhotos, useUploadPhoto, useDeletePhoto } from '../../hooks/usePhoto';
 import { useToast } from '../../components/Toast';
@@ -12,16 +12,16 @@ export function GalleryPage() {
   const [caption, setCaption] = useState('');
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
-  const { data, isLoading } = usePhotos();
+  const { data, isLoading, isError } = usePhotos();
   const uploadPhoto = useUploadPhoto();
   const deletePhoto = useDeletePhoto();
   const { showToast } = useToast();
 
   const handleUpload = () => {
-    const files = fileRef.current?.files;
-    if (!files?.length) return showToast('请先选择照片！', 'error');
+    const file = fileRef.current?.files?.[0];
+    if (!file) return showToast('请先选择照片！', 'error');
     const formData = new FormData();
-    Array.from(files).forEach((f) => formData.append('file', f));
+    formData.append('file', file);
     if (caption.trim()) formData.append('caption', caption.trim());
     uploadPhoto.mutate(formData, {
       onSuccess: () => { setCaption(''); if (fileRef.current) fileRef.current.value = ''; showToast('照片已上传 📸'); },
@@ -29,28 +29,19 @@ export function GalleryPage() {
     });
   };
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    if (fileRef.current && e.dataTransfer.files.length) {
-      fileRef.current.files = e.dataTransfer.files;
-      showToast(`已选择 ${e.dataTransfer.files.length} 张照片`);
-    }
-  };
-
   const photos = data?.data ?? [];
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="📸" title="甜蜜相册" description="珍藏我们的每张照片" backTo="/" backLabel="回到首页" />
-
       <div className="grid md:grid-cols-3 gap-8">
         <div className="bg-white rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-primary mb-4">上传照片</h3>
-          <div onDragOver={(e) => e.preventDefault()} onDrop={handleDrop} onClick={() => fileRef.current?.click()}
+          <div onClick={() => fileRef.current?.click()}
             className="border-2 border-dashed border-love-border rounded-card p-8 text-center cursor-pointer hover:border-primary hover:bg-love-bg transition-colors mb-4">
             <span className="text-4xl">📤</span>
-            <p className="text-sm text-gray-500 mt-2">点击或拖拽上传照片</p>
-            <input ref={fileRef} type="file" accept="image/*" multiple className="hidden" />
+            <p className="text-sm text-gray-500 mt-2">点击选择照片</p>
+            <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" />
           </div>
           <input type="text" value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="写下这张照片的故事..."
             className="w-full px-4 py-2.5 border-2 border-love-border rounded-card focus:border-primary focus:outline-none mb-4 transition-colors" />
@@ -59,21 +50,18 @@ export function GalleryPage() {
             {uploadPhoto.isPending ? '上传中...' : '上传 📸'}
           </button>
         </div>
-
         <div className="md:col-span-2">
-          {isLoading ? <LoadingState /> : photos.length === 0 ? (
-            <EmptyState icon="📸" message="还没有照片哦~" />
-          ) : (
+          {isLoading ? <LoadingState /> : isError ? <EmptyState icon="⚠️" message="加载失败，请刷新重试" /> : photos.length === 0 ? <EmptyState icon="📸" message="还没有照片哦~" /> : (
             <div className="columns-2 lg:columns-3 gap-4 space-y-4">
               {photos.map((photo) => (
                 <div key={photo.id} className="break-inside-avoid bg-white rounded-card shadow overflow-hidden group">
                   <img src={photo.thumbnailPath ?? photo.filePath} alt={photo.caption ?? ''}
-                    className="w-full object-cover cursor-pointer hover:opacity-90 transition-opacity"
-                    onClick={() => setPreviewSrc(photo.filePath)} />
+                    className="w-full object-cover cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setPreviewSrc(photo.filePath)} />
                   <div className="p-3">
                     <div className="flex justify-between items-start">
                       <p className="text-sm text-gray-700 flex-1">{photo.caption}</p>
-                      <button onClick={() => deletePhoto.mutate(photo.id)} className="text-gray-300 hover:text-red-500 transition-colors text-xs ml-2">删除</button>
+                      <button onClick={() => { if (window.confirm('确定删除这张照片吗？')) deletePhoto.mutate(photo.id); }}
+                        className="text-gray-300 hover:text-red-500 transition-colors text-xs ml-2">删除</button>
                     </div>
                     <p className="text-xs text-gray-400 mt-1">{formatRelativeTime(photo.createdAt)}</p>
                   </div>
@@ -83,7 +71,6 @@ export function GalleryPage() {
           )}
         </div>
       </div>
-
       <Modal open={!!previewSrc} onClose={() => setPreviewSrc(null)}>
         {previewSrc && <img src={previewSrc} alt="" className="w-full rounded-card" />}
       </Modal>

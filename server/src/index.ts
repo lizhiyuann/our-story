@@ -23,7 +23,10 @@ const env = loadEnv();
 const app = Fastify({ logger: true });
 
 // Plugins
-await app.register(cors, { origin: true, credentials: true });
+await app.register(cors, {
+  origin: env.NODE_ENV === 'production' ? false : true,
+  credentials: true,
+});
 await app.register(cookie);
 await app.register(jwt, { secret: env.JWT_SECRET });
 await app.register(multipart, { limits: { fileSize: 10 * 1024 * 1024 } });

@@ -4,10 +4,11 @@ import type { ApiResponse } from '../types';
 const BASE = '/api';
 
 async function request<T>(url: string, options?: RequestInit): Promise<ApiResponse<T>> {
+  const hasBody = options?.body !== undefined;
   const res = await fetch(`${BASE}${url}`, {
     credentials: 'include',
     headers: {
-      'Content-Type': 'application/json',
+      ...(hasBody ? { 'Content-Type': 'application/json' } : {}),
       ...options?.headers,
     },
     ...options,

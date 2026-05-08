@@ -9,7 +9,12 @@ let db: ReturnType<typeof drizzle<typeof schema>>;
 
 export function getDb(): ReturnType<typeof drizzle<typeof schema>> {
   if (!db) {
-    const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+    const pool = new Pool({
+      connectionString: process.env.DATABASE_URL,
+      max: 20,
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 5000,
+    });
     db = drizzle(pool, { schema });
   }
   return db;

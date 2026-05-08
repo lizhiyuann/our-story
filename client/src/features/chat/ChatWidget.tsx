@@ -9,11 +9,13 @@ export function ChatWidget() {
   const [input, setInput] = useState('');
   const [sending, setSending] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const historyLoaded = useRef(false);
 
   useEffect(() => {
-    if (open && messages.length === 0) {
+    if (open && !historyLoaded.current) {
+      historyLoaded.current = true;
       chatService.history(30).then((res) => {
-        if (res.data?.length) setMessages(res.data);
+        if (res.data?.length) setMessages((prev) => prev.length === 0 ? res.data! : prev);
       });
     }
   }, [open]);
