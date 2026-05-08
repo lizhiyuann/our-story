@@ -1,5 +1,6 @@
 // 登录页面：用户名密码登录表单
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../stores/auth.store';
 
 export function LoginPage() {
@@ -8,6 +9,7 @@ export function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const login = useAuthStore((s) => s.login);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -15,6 +17,7 @@ export function LoginPage() {
     setLoading(true);
     try {
       await login(username, password);
+      navigate('/');  // 登录成功后跳转首页
     } catch (err) {
       setError(err instanceof Error ? err.message : '登录失败');
     } finally {
