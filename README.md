@@ -171,6 +171,8 @@ DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
 ./dev.sh
 ```
 
+> 详细的服务启动、停止、重启、日志查看和故障排除，请参阅 [服务管理指南](docs/SERVICE-MANAGEMENT.md)。
+
 或手动分别启动：
 
 ```bash
