@@ -29,7 +29,7 @@ export async function chat(userId: number, message: string): Promise<string> {
         user_id: userId,
         history: history.map(m => ({ role: m.role, content: m.content })),
       }),
-      signal: AbortSignal.timeout(30_000),
+      signal: AbortSignal.timeout(60_000),
     });
 
     if (!res.ok) throw new Error(`AI service returned ${res.status}`);

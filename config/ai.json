@@ -92,7 +92,7 @@
     }
   },
 
-  "defaultMaxTokens": 600,
+  "defaultMaxTokens": 2000,
 
   "memory": {
     "_comment": "记忆系统配置",
