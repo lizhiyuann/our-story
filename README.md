@@ -216,7 +216,7 @@ DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
 |---|---|---|
 | Anthropic | `ANTHROPIC_API_KEY` | claude-sonnet-4-6 |
 | OpenAI | `OPENAI_API_KEY` | gpt-4o |
-| **小米** | `XIAOMI_API_KEY` | milm-large |
+| 小米| `XIAOMI_API_KEY` | milm-large |
 | DeepSeek | `DEEPSEEK_API_KEY` | deepseek-chat |
 | 通义千问 | `DASHSCOPE_API_KEY` | qwen-plus |
 | 智谱 GLM | `ZHIPU_API_KEY` | glm-4-plus |
