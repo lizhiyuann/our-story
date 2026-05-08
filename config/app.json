@@ -1,0 +1,64 @@
+{
+  "app": {
+    "name": "Our Story",
+    "version": "1.0.0",
+    "description": "情侣浪漫网站 + AI 智能助手"
+  },
+  "love": {
+    "startDate": "2024-01-01T00:00:00",
+    "emoji": "❤️"
+  },
+  "moods": {
+    "types": ["happy", "love", "sad", "angry", "thinking", "sleepy"],
+    "emojis": {
+      "happy": "😊",
+      "love": "🥰",
+      "sad": "😢",
+      "angry": "😠",
+      "thinking": "🤔",
+      "sleepy": "😴"
+    }
+  },
+  "rants": {
+    "types": ["rant", "scold", "complain"],
+    "typeNames": {
+      "rant": "吐槽",
+      "scold": "骂人",
+      "complain": "抱怨"
+    },
+    "maxIntensity": 10
+  },
+  "countdown": {
+    "icons": [
+      { "value": "🎂", "label": "生日" },
+      { "value": "💕", "label": "纪念日" },
+      { "value": "🎄", "label": "节日" },
+      { "value": "✈️", "label": "旅行" },
+      { "value": "🎓", "label": "毕业" },
+      { "value": "💍", "label": "求婚" },
+      { "value": "❤️", "label": "其他" }
+    ]
+  },
+  "timeline": {
+    "icons": [
+      { "value": "💕", "label": "相爱" },
+      { "value": "🎉", "label": "庆祝" },
+      { "value": "✈️", "label": "旅行" },
+      { "value": "🍽️", "label": "约会" },
+      { "value": "🎬", "label": "电影" },
+      { "value": "🎵", "label": "音乐" },
+      { "value": "📸", "label": "拍照" },
+      { "value": "❤️", "label": "其他" }
+    ]
+  },
+  "photos": {
+    "maxSizeMB": 5,
+    "allowedTypes": ["image/jpeg", "image/png", "image/webp"],
+    "thumbnailWidth": 400,
+    "maxWidth": 2000
+  },
+  "chat": {
+    "maxHistoryLength": 20,
+    "maxMessageLength": 2000
+  }
+}

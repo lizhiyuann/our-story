@@ -1,0 +1,73 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: love
+      POSTGRES_PASSWORD: love_secret
+      POSTGRES_DB: love_db
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U love -d love_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  ai-service:
+    build:
+      context: ./ai-service
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      API_BASE_URL: http://server:3001
+      CHROMA_PERSIST_DIR: /app/chroma_data
+    volumes:
+      - chroma_data:/app/chroma_data
+    ports:
+      - "8000:8000"
+
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      ai-service:
+        condition: service_started
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://love:love_secret@db:5432/love_db
+      AI_SERVICE_URL: http://ai-service:8000
+    volumes:
+      - uploads:/app/uploads
+    ports:
+      - "3001:3001"
+
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+
+  nginx:
+    image: nginx:alpine
+    restart: unless-stopped
+    depends_on:
+      - server
+      - client
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - uploads:/uploads:ro
+
+volumes:
+  pgdata:
+  uploads:
+  chroma_data:
