@@ -76,20 +76,29 @@ export function ChatWidget() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, streamingText]);
 
-  // 新建对话
+  // 新建对话（只清空视图，不删数据库）
   const handleNewChat = () => {
     if (streamControllerRef.current) streamControllerRef.current.abort();
     setMessages([]);
     setStreamingText('');
     setSending(false);
-    historyLoaded.current = false;
   };
 
-  // 清空历史
+  // 加载历史记录
+  const handleLoadHistory = async () => {
+    const res = await chatService.history(50);
+    if (res.data?.length) {
+      setMessages(res.data);
+    }
+  };
+
+  // 清空所有历史（删除数据库记录）
   const handleClearHistory = async () => {
-    if (!window.confirm('确定清空所有聊天记录吗？')) return;
+    if (!window.confirm('确定清空所有聊天记录吗？此操作不可恢复。')) return;
     await chatService.clear();
-    handleNewChat();
+    setMessages([]);
+    setStreamingText('');
+    setSending(false);
   };
 
   // 流式发送
@@ -177,8 +186,9 @@ export function ChatWidget() {
               </div>
             </div>
             <div className="flex items-center gap-1">
-              <button onClick={handleNewChat} className="opacity-70 hover:opacity-100 text-xs px-1.5 py-0.5 rounded bg-white/20" title="新建对话">新建</button>
-              <button onClick={handleClearHistory} className="opacity-70 hover:opacity-100 text-xs px-1.5 py-0.5 rounded bg-white/20" title="清空记录">清空</button>
+              <button onClick={handleNewChat} className="opacity-70 hover:opacity-100 text-xs px-1.5 py-0.5 rounded bg-white/20" title="新建对话（清空当前视图）">新建</button>
+              <button onClick={handleLoadHistory} className="opacity-70 hover:opacity-100 text-xs px-1.5 py-0.5 rounded bg-white/20" title="加载历史消息">历史</button>
+              <button onClick={handleClearHistory} className="opacity-70 hover:opacity-100 text-xs px-1.5 py-0.5 rounded bg-white/20" title="清空所有记录（不可恢复）">清空</button>
               <button onClick={() => setShowSettings(!showSettings)} className="opacity-70 hover:opacity-100 text-sm ml-1" title="设置">⚙️</button>
               <button onClick={() => setOpen(false)} className="opacity-70 hover:opacity-100 text-xl ml-1">&times;</button>
             </div>
