@@ -1,3 +1,4 @@
+// 吐槽页面：类型选择 + 强度滑块 + 发泄记录
 import { useState } from 'react';
 import { useRants, useCreateRant, useDeleteRant } from '../../hooks/useRant';
 import { useToast } from '../../components/Toast';

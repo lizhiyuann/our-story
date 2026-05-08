@@ -1,3 +1,4 @@
+// 相册页面：拖拽上传 + 瀑布流展示 + 大图预览
 import { useState, useRef } from 'react';
 import { usePhotos, useUploadPhoto, useDeletePhoto } from '../../hooks/usePhoto';
 import { useToast } from '../../components/Toast';

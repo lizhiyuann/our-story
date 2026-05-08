@@ -1,3 +1,4 @@
+// 数据库连接管理
 import { drizzle } from 'drizzle-orm/node-postgres';
 import pg from 'pg';
 import * as schema from './schema.js';

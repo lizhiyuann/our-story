@@ -1,13 +1,18 @@
-"""Memory keeper skill: record and recall important moments."""
+"""记忆守护技能：记录重要时刻，关联过去记忆。"""
 
 from .base import BaseSkill
 
-MEMORY_KEYWORDS = ["记住", "纪念", "第一次", "重要", "特别", "里程碑", "今天"]
+_MEMORY_KEYWORDS = [
+    "记住", "纪念", "第一次", "重要", "特别", "里程碑", "今天",
+    "永远", "不能忘", "刻", "日子", "历史性的",
+]
 
 
 class MemoryKeeperSkill(BaseSkill):
+    """记忆守护技能：当用户分享重要事件或要求记住某事时激活。"""
+
     name = "memory_keeper"
-    description = "Records important moments and recalls related memories"
+    description = "记录重要时刻并关联过去的美好记忆"
 
     @property
     def prompt(self) -> str:
@@ -22,8 +27,15 @@ class MemoryKeeperSkill(BaseSkill):
         return ["save_memory", "record_event", "search_memory", "get_timeline"]
 
     def score_match(self, message: str, context: dict) -> float:
+        """
+        匹配逻辑：
+        1. 关键词匹配 → 每个 +0.2 分
+        2. 消息较长（用户在描述事件）→ +0.1 分
+        """
         score = 0.0
-        for kw in MEMORY_KEYWORDS:
+        for kw in _MEMORY_KEYWORDS:
             if kw in message:
                 score += 0.2
+        if len(message) > 50:
+            score += 0.1
         return min(score, 1.0)

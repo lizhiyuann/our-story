@@ -1,4 +1,4 @@
-"""Structured logging system with request-level tracing."""
+"""结构化日志系统：JSON 格式，支持请求级链路追踪。"""
 
 import json
 import logging

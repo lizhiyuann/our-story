@@ -1,3 +1,4 @@
+// 相册服务：照片上传、缩略图生成、删除
 import { desc, eq, sql } from 'drizzle-orm';
 import path from 'node:path';
 import fs from 'node:fs/promises';

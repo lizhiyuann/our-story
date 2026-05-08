@@ -1,3 +1,4 @@
+// AI 聊天浮窗：对话消息列表 + 输入框
 import { useState, useRef, useEffect } from 'react';
 import { chatService } from '../../services/chat.service';
 import type { ChatMessage } from '../../types';

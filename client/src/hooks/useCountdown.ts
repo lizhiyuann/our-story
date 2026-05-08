@@ -1,3 +1,4 @@
+// 倒计时模块 React Query hooks：查询、创建、删除（每秒自动刷新）
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { countdownService } from '../services/countdown.service';
 

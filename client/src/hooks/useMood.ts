@@ -1,3 +1,4 @@
+// 心情模块 React Query hooks：查询、创建、删除
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { moodService } from '../services/mood.service';
 import type { MoodType } from '../types';

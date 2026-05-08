@@ -1,3 +1,4 @@
+// 聊天 API 服务：发送消息、获取历史
 import type { ChatMessage } from '../types';
 import { get, post } from './api.client';
 

@@ -1,3 +1,4 @@
+// 倒计时卡片：实时更新的天/时/分/秒显示
 import { useState, useEffect } from 'react';
 import type { Countdown } from '../../types';
 import { calcCountdown } from '../../utils/date';

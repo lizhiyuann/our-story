@@ -1,3 +1,4 @@
+// 认证服务：用户登录、密码验证、用户查询
 import bcrypt from 'bcryptjs';
 import { eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';

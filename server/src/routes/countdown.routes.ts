@@ -1,3 +1,4 @@
+// 倒计时路由：GET/POST/DELETE /api/countdowns
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authGuard } from '../middleware/auth.js';

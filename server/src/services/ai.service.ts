@@ -1,3 +1,4 @@
+// AI 服务：调用 Python Agent 处理聊天
 import { desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 

@@ -1,4 +1,4 @@
-"""Data models for the memory system."""
+"""记忆系统数据模型定义。"""
 
 from __future__ import annotations
 from dataclasses import dataclass, field

@@ -1,3 +1,4 @@
+// 心情页面：心情选择 + 文字输入 + 历史列表
 import { useState } from 'react';
 import { useMoods, useCreateMood, useDeleteMood } from '../../hooks/useMood';
 import { useToast } from '../../components/Toast';

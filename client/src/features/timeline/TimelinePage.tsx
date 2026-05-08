@@ -1,3 +1,4 @@
+// 时间轴页面：事件表单 + 垂直时间线
 import { useState } from 'react';
 import { useTimeline, useCreateTimelineEvent, useDeleteTimelineEvent } from '../../hooks/useTimeline';
 import { useToast } from '../../components/Toast';

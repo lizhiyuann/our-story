@@ -1,3 +1,4 @@
+// 认证路由：登录、登出、获取当前用户
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authenticateUser, getUserById } from '../services/auth.service.js';

@@ -1,3 +1,4 @@
+// 时间轴 API 服务：list / create / delete
 import type { TimelineEvent } from '../types';
 import { get, post, del } from './api.client';
 

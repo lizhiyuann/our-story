@@ -1,13 +1,18 @@
-"""Date planner skill: suggest activities and plan dates."""
+"""约会规划技能：建议活动方案，创建倒计时。"""
 
 from .base import BaseSkill
 
-DATE_KEYWORDS = ["约会", "出去玩", "做什么", "周末", "无聊", "计划", "安排", "玩什么", "吃什么"]
+_DATE_KEYWORDS = [
+    "约会", "出去玩", "做什么", "周末", "无聊", "计划", "安排",
+    "玩什么", "吃什么", "去哪", "逛街", "看电影", "旅游",
+]
 
 
 class DatePlannerSkill(BaseSkill):
+    """约会规划技能：当用户提到约会、出去玩、不知道做什么时激活。"""
+
     name = "date_planner"
-    description = "Suggests date activities and creates countdowns"
+    description = "建议约会活动和规划出行方案"
 
     @property
     def prompt(self) -> str:
@@ -23,8 +28,15 @@ class DatePlannerSkill(BaseSkill):
         return ["get_countdowns", "search_memory", "create_countdown", "get_user_preferences", "get_timeline"]
 
     def score_match(self, message: str, context: dict) -> float:
+        """
+        匹配逻辑：
+        1. 关键词匹配 → 每个 +0.2 分
+        2. 短消息 + 无聊信号 → +0.2 分
+        """
         score = 0.0
-        for kw in DATE_KEYWORDS:
+        for kw in _DATE_KEYWORDS:
             if kw in message:
-                score += 0.25
+                score += 0.2
+        if len(message) < 10 and any(kw in message for kw in ["无聊", "干嘛", "做什么"]):
+            score += 0.2
         return min(score, 1.0)

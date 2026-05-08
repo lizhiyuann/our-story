@@ -1,3 +1,4 @@
+// 模态框组件：居中弹窗 + 遮罩 + 点击外部关闭
 import { type ReactNode, useEffect } from 'react';
 
 interface ModalProps {

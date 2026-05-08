@@ -1,4 +1,4 @@
-"""FastAPI entry point for the Love AI Agent."""
+"""AI Agent 的 FastAPI 服务入口。"""
 
 import uuid
 from contextlib import asynccontextmanager

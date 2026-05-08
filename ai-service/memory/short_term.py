@@ -1,4 +1,4 @@
-"""Short-term memory: conversation buffer with summarization."""
+"""短期记忆：对话级上下文管理，支持自动摘要压缩。"""
 
 from __future__ import annotations
 from logger import get_logger, log_event

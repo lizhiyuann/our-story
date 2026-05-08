@@ -1,3 +1,4 @@
+// 应用根组件：路由配置、认证守卫、全局布局
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './stores/auth.store';

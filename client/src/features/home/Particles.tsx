@@ -1,3 +1,4 @@
+// 粒子效果：首页漂浮的心形 emoji 动画
 import { useMemo } from 'react';
 
 const EMOJIS = ['❤️', '💕', '💖', '💗', '💓', '💝', '🌸', '✨'];

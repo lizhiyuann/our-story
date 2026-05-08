@@ -1,3 +1,4 @@
+// 认证状态管理（Zustand）：登录、登出、获取当前用户
 import { create } from 'zustand';
 import type { User } from '../types';
 import * as api from '../services/api.client';

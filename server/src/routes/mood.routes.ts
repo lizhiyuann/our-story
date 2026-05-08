@@ -1,3 +1,4 @@
+// 心情路由：GET/POST/DELETE /api/moods
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authGuard } from '../middleware/auth.js';

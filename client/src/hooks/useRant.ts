@@ -1,3 +1,4 @@
+// 吐槽模块 React Query hooks：查询、创建、删除
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { rantService } from '../services/rant.service';
 

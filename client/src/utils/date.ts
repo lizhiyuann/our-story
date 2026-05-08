@@ -1,3 +1,4 @@
+// 日期工具函数：相对时间格式化、倒计时计算
 export function formatRelativeTime(dateStr: string): string {
   const date = new Date(dateStr);
   const now = new Date();

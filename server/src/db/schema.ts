@@ -1,3 +1,4 @@
+// 数据库表结构定义（Drizzle ORM）
 import { pgTable, serial, varchar, text, integer, timestamp, date } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {

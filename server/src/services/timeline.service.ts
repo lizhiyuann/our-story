@@ -1,3 +1,4 @@
+// 时间轴服务：事件的 CRUD 操作
 import { desc, eq } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 

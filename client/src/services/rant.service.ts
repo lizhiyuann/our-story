@@ -1,3 +1,4 @@
+// 吐槽 API 服务：list / create / delete
 import type { Rant } from '../types';
 import { get, post, del } from './api.client';
 

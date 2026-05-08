@@ -1,3 +1,4 @@
+// 自定义错误类
 export class AppError extends Error {
   constructor(
     public statusCode: number,

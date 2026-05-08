@@ -1,3 +1,4 @@
+// 相册路由：上传、列表、删除照片
 import type { FastifyInstance } from 'fastify';
 import { authGuard } from '../middleware/auth.js';
 import { uploadPhoto, getPhotos, deletePhoto } from '../services/photo.service.js';

@@ -1,3 +1,4 @@
+// 首页：英雄区 + 功能卡片导航
 import { Link } from 'react-router-dom';
 import { Particles } from './Particles';
 import { LoveCounter } from './LoveCounter';

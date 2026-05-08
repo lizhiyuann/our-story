@@ -1,4 +1,4 @@
-"""Working memory: real-time context loaded per request."""
+"""工作记忆：每次请求时从 API 和记忆系统加载实时上下文。"""
 
 from __future__ import annotations
 import time

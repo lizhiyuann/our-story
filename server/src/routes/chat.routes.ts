@@ -1,3 +1,4 @@
+// 聊天路由：发送消息、获取历史
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authGuard } from '../middleware/auth.js';

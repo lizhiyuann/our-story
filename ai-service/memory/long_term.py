@@ -1,4 +1,4 @@
-"""Long-term memory: ChromaDB vector store for semantic search."""
+"""长期记忆：基于 ChromaDB 向量数据库的语义搜索系统。"""
 
 from __future__ import annotations
 import time

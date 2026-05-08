@@ -1,3 +1,4 @@
+// API 客户端：封装 fetch 请求（GET/POST/DELETE/UPLOAD）
 import type { ApiResponse } from '../types';
 
 const BASE = '/api';

@@ -1,3 +1,4 @@
+// 吐槽路由：GET/POST/DELETE /api/rants
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authGuard } from '../middleware/auth.js';

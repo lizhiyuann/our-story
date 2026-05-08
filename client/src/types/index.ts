@@ -1,3 +1,4 @@
+// 共享类型定义：API 响应、业务实体、常量
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;

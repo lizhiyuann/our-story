@@ -1,3 +1,4 @@
+// JWT 认证中间件，支持 Agent 内部调用
 import type { FastifyRequest, FastifyReply } from 'fastify';
 import { UnauthorizedError } from '../utils/errors.js';
 

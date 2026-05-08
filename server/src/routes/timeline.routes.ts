@@ -1,3 +1,4 @@
+// 时间轴路由：GET/POST/DELETE /api/timeline
 import type { FastifyInstance } from 'fastify';
 import { z } from 'zod';
 import { authGuard } from '../middleware/auth.js';

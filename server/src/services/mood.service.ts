@@ -1,3 +1,4 @@
+// 心情服务：心情记录的 CRUD 操作
 import { desc, eq, sql } from 'drizzle-orm';
 import { getDb, schema } from '../db/index.js';
 

@@ -1,3 +1,4 @@
+// 相册 API 服务：list / upload / delete
 import type { Photo } from '../types';
 import { get, del, upload } from './api.client';
 

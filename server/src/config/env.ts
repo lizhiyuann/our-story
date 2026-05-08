@@ -1,3 +1,4 @@
+// 环境变量加载与验证
 import { z } from 'zod';
 
 const envSchema = z.object({

@@ -1,3 +1,4 @@
+// 导航栏组件：桌面端横向菜单 + 移动端汉堡菜单
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuthStore } from '../stores/auth.store';

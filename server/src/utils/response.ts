@@ -1,3 +1,4 @@
+// API 响应格式化工具
 export interface ApiResponse<T = unknown> {
   success: boolean;
   data?: T;

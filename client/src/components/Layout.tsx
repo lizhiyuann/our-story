@@ -1,3 +1,4 @@
+// 全局布局组件：导航栏 + 内容区 + 页脚
 import { Outlet } from 'react-router-dom';
 import { Navbar } from './Navbar';
 
