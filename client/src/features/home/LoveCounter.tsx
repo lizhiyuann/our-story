@@ -1,26 +1,20 @@
-// 恋爱计时器：实时显示在一起的天/时/分/秒
+// 恋爱计时器：从 config/app.json 读取纪念日，实时显示在一起的天/时/分/秒
 import { useEffect, useState } from 'react';
+import { useConfig } from '../../hooks/useConfig';
 
-// 修改为你们在一起的日期
-const START_DATE = new Date('2024-01-01T00:00:00');
-
-function calcDiff() {
-  const diff = Date.now() - START_DATE.getTime();
-  return {
-    days: Math.floor(diff / 86400000),
-    hours: Math.floor((diff % 86400000) / 3600000),
-    minutes: Math.floor((diff % 3600000) / 60000),
-    seconds: Math.floor((diff % 60000) / 1000),
-  };
-}
+// 默认纪念日（配置加载前使用）
+const DEFAULT_START = '2024-01-01T00:00:00';
 
 export function LoveCounter() {
-  const [time, setTime] = useState(calcDiff);
+  const { data: config } = useConfig();
+  const startDate = config?.data?.love?.startDate ?? DEFAULT_START;
+
+  const [time, setTime] = useState(() => calcDiff(startDate));
 
   useEffect(() => {
-    const timer = setInterval(() => setTime(calcDiff()), 1000);
+    const timer = setInterval(() => setTime(calcDiff(startDate)), 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [startDate]);
 
   const units = [
     { value: time.days, label: '天' },
@@ -44,4 +38,14 @@ export function LoveCounter() {
       </div>
     </div>
   );
+}
+
+function calcDiff(startDate: string) {
+  const diff = Date.now() - new Date(startDate).getTime();
+  return {
+    days: Math.floor(diff / 86400000),
+    hours: Math.floor((diff % 86400000) / 3600000),
+    minutes: Math.floor((diff % 3600000) / 60000),
+    seconds: Math.floor((diff % 60000) / 1000),
+  };
 }

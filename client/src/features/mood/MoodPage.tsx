@@ -2,6 +2,9 @@
 import { useState } from 'react';
 import { useMoods, useCreateMood, useDeleteMood } from '../../hooks/useMood';
 import { useToast } from '../../components/Toast';
+import { PageHeader } from '../../components/PageHeader';
+import { EmptyState } from '../../components/EmptyState';
+import { LoadingState } from '../../components/LoadingState';
 import { MOOD_EMOJIS, type MoodType } from '../../types';
 import { formatRelativeTime } from '../../utils/date';
 
@@ -16,15 +19,10 @@ export function MoodPage() {
   const handleSubmit = () => {
     if (!selectedMood) return showToast('请选择一个心情！', 'error');
     if (!content.trim()) return showToast('写下你的心情！', 'error');
-
     createMood.mutate(
       { moodType: selectedMood, emoji: MOOD_EMOJIS[selectedMood], content: content.trim() },
       {
-        onSuccess: () => {
-          setContent('');
-          setSelectedMood(null);
-          showToast('心情已记录 ❤️');
-        },
+        onSuccess: () => { setContent(''); setSelectedMood(null); showToast('心情已记录 ❤️'); },
         onError: () => showToast('记录失败', 'error'),
       },
     );
@@ -33,10 +31,11 @@ export function MoodPage() {
   const moods = data?.data ?? [];
 
   return (
-    <section className="max-w-6xl mx-auto py-12 px-4">
-      <h2 className="text-3xl font-bold text-center text-primary mb-10">😊 心情记录</h2>
+    <div className="max-w-6xl mx-auto py-8 px-4">
+      <PageHeader icon="😊" title="心情记录" description="记录每天的心情变化" backTo="/" backLabel="回到首页" />
+
       <div className="grid md:grid-cols-2 gap-8">
-        {/* Input */}
+        {/* 输入区 */}
         <div className="bg-white rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-primary mb-4">今天心情如何？</h3>
           <div className="flex gap-2 flex-wrap mb-4">
@@ -45,9 +44,7 @@ export function MoodPage() {
                 key={type}
                 onClick={() => setSelectedMood(type)}
                 className={`text-3xl w-14 h-14 rounded-full flex items-center justify-center transition-all ${
-                  selectedMood === type
-                    ? 'bg-pink-100 ring-2 ring-primary scale-110'
-                    : 'bg-love-bg hover:scale-105'
+                  selectedMood === type ? 'bg-pink-100 ring-2 ring-primary scale-110' : 'bg-love-bg hover:scale-105'
                 }`}
               >
                 {emoji}
@@ -70,36 +67,27 @@ export function MoodPage() {
           </button>
         </div>
 
-        {/* History */}
+        {/* 历史列表 */}
         <div className="bg-white rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-primary mb-4">心情历史</h3>
           <div className="max-h-[500px] overflow-y-auto space-y-3">
-            {isLoading ? (
-              <p className="text-gray-400 text-center py-8">加载中...</p>
-            ) : moods.length === 0 ? (
-              <p className="text-gray-400 text-center py-8">还没有心情记录哦~</p>
-            ) : (
-              moods.map((mood) => (
-                <div key={mood.id} className="bg-love-bg rounded-card p-4 animate-fade-in">
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-2xl">{mood.emoji}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-400">{formatRelativeTime(mood.createdAt)}</span>
-                      <button
-                        onClick={() => deleteMood.mutate(mood.id)}
-                        className="text-gray-300 hover:text-red-500 transition-colors text-sm"
-                      >
-                        删除
-                      </button>
-                    </div>
+            {isLoading ? <LoadingState /> : moods.length === 0 ? (
+              <EmptyState icon="😊" message="还没有心情记录哦~" />
+            ) : moods.map((mood) => (
+              <div key={mood.id} className="bg-love-bg rounded-card p-4 animate-fade-in">
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-2xl">{mood.emoji}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-xs text-gray-400">{formatRelativeTime(mood.createdAt)}</span>
+                    <button onClick={() => deleteMood.mutate(mood.id)} className="text-gray-300 hover:text-red-500 transition-colors text-sm">删除</button>
                   </div>
-                  <p className="text-gray-700">{mood.content}</p>
                 </div>
-              ))
-            )}
+                <p className="text-gray-700">{mood.content}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
