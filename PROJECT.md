@@ -98,13 +98,35 @@ chat_messages   - AI 聊天记录
 
 ---
 
-## 部署
+## 端口配置
+
+| 服务 | 端口 | 健康检查 | 说明 |
+|---|---|---|---|
+| Nginx | 80 | - | 统一入口，反向代理 |
+| Client | 3000 | - | React 前端（Nginx 代理） |
+| Server | 3001 | /api/health | Node.js 后端 API |
+| AI Agent | 8000 | /health | Python AI 服务 |
+| PostgreSQL | 5432 | pg_isready | 数据库 |
+
+端口配置集中在 `config/app.json` 的 `ports` 字段和 `docker-compose.yml` 中。
+
+---
+
+## 启动方式
 
 ```bash
+# 一键启动（推荐）
+./start.sh
+
+# 一键停止
+./stop.sh
+
+# 本地开发（热更新）
+./dev.sh
+
+# 手动 Docker 启动
 cp .env.example .env
-# 编辑 .env 设置密码和 API Key
 docker compose up -d
-# 访问 http://localhost
 ```
 
 ---

@@ -7,6 +7,15 @@
     "description": "情侣浪漫网站 + AI 智能助手"
   },
 
+  "ports": {
+    "_comment": "各服务端口配置（修改 docker-compose.yml 中的端口映射即可）",
+    "nginx": 80,
+    "client": 3000,
+    "server": 3001,
+    "aiService": 8000,
+    "postgres": 5432
+  },
+
   "love": {
     "_comment": "恋爱纪念日配置，修改 startDate 为你们在一起的日期",
     "startDate": "2024-01-01T00:00:00",

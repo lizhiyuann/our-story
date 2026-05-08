@@ -151,21 +151,68 @@ DEEPSEEK_API_KEY=sk-xxxxxxxxxxxxxxxx
 
 ## 端口说明
 
-| 服务 | 端口 | 说明 | 是否需要外部访问 |
-|---|---|---|---|
-| **Nginx** | `80` | 统一入口（反向代理） | 是（用户访问） |
-| Client | `3000` | React 前端（Vite dev server） | 否（Nginx 代理） |
-| Server | `3001` | Node.js 后端 API | 否（Nginx 代理） |
-| AI Agent | `8000` | Python AI 服务 | 否（内部调用） |
-| PostgreSQL | `5432` | 数据库 | 否（Docker 内部网络） |
+| 服务 | 端口 | 说明 | 外部访问 | 健康检查 |
+|---|---|---|---|---|
+| **Nginx** | `80` | 统一入口（反向代理） | 是（用户访问） | - |
+| **Client** | `3000` | React 前端（Vite） | 否（Nginx 代理） | - |
+| **Server** | `3001` | Node.js 后端 API | 否（Nginx 代理） | `http://localhost:3001/api/health` |
+| **AI Agent** | `8000` | Python AI 服务 | 否（内部调用） | `http://localhost:8000/health` |
+| **PostgreSQL** | `5432` | 数据库 | 否（Docker 网络） | `pg_isready` |
+
+### 端口关系图
+
+```
+用户浏览器
+    │
+    ▼ :80
+┌─────────┐
+│  Nginx  │
+└────┬────┘
+     │ /              │ /api
+     ▼                ▼
+┌─────────┐     ┌─────────┐     ┌─────────┐
+│ Client  │     │ Server  │────▶│ Postgres│
+│  :3000  │     │  :3001  │     │  :5432  │
+└─────────┘     └────┬────┘     └─────────┘
+                     │
+                     ▼
+                ┌─────────┐
+                │AI Agent │
+                │  :8000  │
+                └─────────┘
+```
 
 > **生产环境只需开放 80 端口**，其余服务通过 Docker 内部网络通信。
 
-如果 80 端口被占用，修改 `docker-compose.yml` 中 Nginx 的端口映射：
+### 修改端口
+
+如果默认端口被占用，修改 `docker-compose.yml`：
+
 ```yaml
+# Nginx 入口改为 8080
 nginx:
   ports:
-    - "8080:80"  # 改为 8080 或其他可用端口
+    - "8080:80"
+
+# 后端改为 3002
+server:
+  ports:
+    - "3002:3001"
+```
+
+### 验证服务状态
+
+```bash
+# 查看所有服务状态
+docker compose ps
+
+# 检查各服务健康
+curl http://localhost:3001/api/health   # 后端
+curl http://localhost:8000/health       # AI Agent
+curl http://localhost:80                 # 前端 + Nginx
+
+# 查看实时日志
+docker compose logs -f
 ```
 
 ---
