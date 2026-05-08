@@ -25,12 +25,12 @@ export function Modal({ open, onClose, children }: ModalProps) {
       onClick={onClose}
     >
       <div
-        className="relative bg-white rounded-card p-6 max-w-2xl w-[90%] max-h-[80vh] overflow-y-auto shadow-xl animate-fade-in"
+        className="relative bg-[var(--color-card)] rounded-card p-6 max-w-2xl w-[90%] max-h-[80vh] overflow-y-auto shadow-xl animate-fade-in"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 text-xl"
+          className="absolute top-4 right-4 text-[var(--color-text-muted)] hover:text-[var(--color-text-light)] text-xl"
         >
           &times;
         </button>

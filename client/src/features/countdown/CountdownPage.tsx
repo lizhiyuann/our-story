@@ -37,7 +37,7 @@ export function CountdownPage() {
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="⏰" title="重要日子" description="倒计时每一个特别时刻" backTo="/" backLabel="回到首页" />
       <div className="grid md:grid-cols-3 gap-8">
-        <div className="bg-white rounded-card shadow p-6">
+        <div className="bg-[var(--color-card)] rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-primary mb-4">添加新的倒计时</h3>
           <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="事件名称"
             className="w-full px-4 py-2.5 border-2 border-love-border rounded-card focus:border-primary focus:outline-none mb-3 transition-colors" />

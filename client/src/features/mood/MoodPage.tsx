@@ -32,7 +32,7 @@ export function MoodPage() {
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="😊" title="心情记录" description="记录每天的心情变化" backTo="/" backLabel="回到首页" />
       <div className="grid md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-card shadow p-6">
+        <div className="bg-[var(--color-card)] rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-primary mb-4">今天心情如何？</h3>
           <div className="flex gap-2 flex-wrap mb-4">
             {(Object.entries(MOOD_EMOJIS) as [MoodType, string][]).map(([type, emoji]) => (
@@ -49,7 +49,7 @@ export function MoodPage() {
             {createMood.isPending ? '记录中...' : '记录心情 ❤️'}
           </button>
         </div>
-        <div className="bg-white rounded-card shadow p-6">
+        <div className="bg-[var(--color-card)] rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-primary mb-4">心情历史</h3>
           <div className="max-h-[500px] overflow-y-auto space-y-3">
             {isLoading ? <LoadingState /> : isError ? (
@@ -59,12 +59,12 @@ export function MoodPage() {
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-2xl">{mood.emoji}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400">{formatRelativeTime(mood.createdAt)}</span>
+                    <span className="text-xs text-[var(--color-text-muted)]">{formatRelativeTime(mood.createdAt)}</span>
                     <button onClick={() => { if (window.confirm('确定删除这条心情吗？')) deleteMood.mutate(mood.id); }}
-                      className="text-gray-300 hover:text-red-500 transition-colors text-sm">删除</button>
+                      className="text-[var(--color-text-muted)] hover:text-red-500 transition-colors text-sm">删除</button>
                   </div>
                 </div>
-                <p className="text-gray-700">{mood.content}</p>
+                <p className="text-[var(--color-text)]">{mood.content}</p>
                 <ReplySection targetType="mood" targetId={mood.id} />
               </div>
             ))}

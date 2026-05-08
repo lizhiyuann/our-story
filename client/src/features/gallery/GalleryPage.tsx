@@ -36,12 +36,12 @@ export function GalleryPage() {
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="📸" title="甜蜜相册" description="珍藏我们的每张照片" backTo="/" backLabel="回到首页" />
       <div className="grid md:grid-cols-3 gap-8">
-        <div className="bg-white rounded-card shadow p-6">
+        <div className="bg-[var(--color-card)] rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-primary mb-4">上传照片</h3>
           <div onClick={() => fileRef.current?.click()}
             className="border-2 border-dashed border-love-border rounded-card p-8 text-center cursor-pointer hover:border-primary hover:bg-love-bg transition-colors mb-4">
             <span className="text-4xl">📤</span>
-            <p className="text-sm text-gray-500 mt-2">点击选择照片</p>
+            <p className="text-sm text-[var(--color-text-light)] mt-2">点击选择照片</p>
             <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" />
           </div>
           <input type="text" value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="写下这张照片的故事..."
@@ -55,16 +55,16 @@ export function GalleryPage() {
           {isLoading ? <LoadingState /> : isError ? <EmptyState icon="⚠️" message="加载失败，请刷新重试" /> : photos.length === 0 ? <EmptyState icon="📸" message="还没有照片哦~" /> : (
             <div className="columns-2 lg:columns-3 gap-4 space-y-4">
               {photos.map((photo) => (
-                <div key={photo.id} className="break-inside-avoid bg-white rounded-card shadow overflow-hidden group">
+                <div key={photo.id} className="break-inside-avoid bg-[var(--color-card)] rounded-card shadow overflow-hidden group">
                   <img src={photo.thumbnailPath ?? photo.filePath} alt={photo.caption ?? ''}
                     className="w-full object-cover cursor-pointer hover:opacity-90 transition-opacity" onClick={() => setPreviewSrc(photo.filePath)} />
                   <div className="p-3">
                     <div className="flex justify-between items-start">
-                      <p className="text-sm text-gray-700 flex-1">{photo.caption}</p>
+                      <p className="text-sm text-[var(--color-text)] flex-1">{photo.caption}</p>
                       <button onClick={() => { if (window.confirm('确定删除这张照片吗？')) deletePhoto.mutate(photo.id); }}
-                        className="text-gray-300 hover:text-red-500 transition-colors text-xs ml-2">删除</button>
+                        className="text-[var(--color-text-muted)] hover:text-red-500 transition-colors text-xs ml-2">删除</button>
                     </div>
-                    <p className="text-xs text-gray-400 mt-1">{formatRelativeTime(photo.createdAt)}</p>
+                    <p className="text-xs text-[var(--color-text-muted)] mt-1">{formatRelativeTime(photo.createdAt)}</p>
                     <ReplySection targetType="photo" targetId={photo.id} />
                   </div>
                 </div>

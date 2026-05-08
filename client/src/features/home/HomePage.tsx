@@ -7,13 +7,13 @@ export function HomePage() {
   return (
     <div>
       {/* Hero */}
-      <section className="min-h-screen flex items-center justify-center bg-gradient-to-br from-love-bg to-pink-100 relative overflow-hidden">
+      <section className="min-h-screen flex items-center justify-center relative overflow-hidden" style={{ background: `linear-gradient(135deg, var(--color-bg), var(--color-bg-alt))` }}>
         <Particles />
         <div className="text-center z-10 px-4">
           <h1 className="text-5xl md:text-6xl font-bold text-primary mb-4 animate-pulse">
             给最爱的你
           </h1>
-          <p className="text-lg text-gray-500 mb-8">每一个瞬间，都想和你分享</p>
+          <p className="text-lg text-[var(--color-text-light)] mb-8">每一个瞬间，都想和你分享</p>
           <LoveCounter />
           <Link
             to="/mood"
@@ -38,11 +38,11 @@ export function HomePage() {
             <Link
               key={card.to}
               to={card.to}
-              className="bg-white rounded-card p-6 shadow hover:shadow-lg hover:-translate-y-1 transition-all"
+              className="bg-[var(--color-card)] rounded-card p-6 shadow hover:shadow-lg hover:-translate-y-1 transition-all"
             >
               <span className="text-4xl">{card.icon}</span>
-              <h3 className="text-lg font-bold mt-3 text-gray-800">{card.title}</h3>
-              <p className="text-sm text-gray-500 mt-1">{card.desc}</p>
+              <h3 className="text-lg font-bold mt-3 text-[var(--color-text)]">{card.title}</h3>
+              <p className="text-sm text-[var(--color-text-light)] mt-1">{card.desc}</p>
             </Link>
           ))}
         </div>

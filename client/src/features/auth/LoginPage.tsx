@@ -26,14 +26,14 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-love-bg to-pink-100">
-      <div className="bg-white rounded-card shadow-lg p-8 w-full max-w-sm">
+    <div className="min-h-screen flex items-center justify-center" style={{ background: `linear-gradient(135deg, var(--color-bg), var(--color-bg-alt))` }}>
+      <div className="bg-[var(--color-card)] rounded-card shadow-lg p-8 w-full max-w-sm">
         <h1 className="text-2xl font-bold text-center text-primary mb-2">❤️ 给最爱的你</h1>
-        <p className="text-center text-gray-400 text-sm mb-6">登录后开始记录美好时光</p>
+        <p className="text-center text-[var(--color-text-muted)] text-sm mb-6">登录后开始记录美好时光</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm text-gray-600 mb-1">用户名</label>
+            <label className="block text-sm text-[var(--color-text-light)] mb-1">用户名</label>
             <input
               type="text"
               value={username}
@@ -43,7 +43,7 @@ export function LoginPage() {
             />
           </div>
           <div>
-            <label className="block text-sm text-gray-600 mb-1">密码</label>
+            <label className="block text-sm text-[var(--color-text-light)] mb-1">密码</label>
             <input
               type="password"
               value={password}

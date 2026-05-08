@@ -24,15 +24,15 @@ export function LoveCounter() {
   ];
 
   return (
-    <div className="bg-white rounded-card shadow-lg p-6 inline-block">
-      <p className="text-gray-500 mb-4">我们已经在一起</p>
+    <div className="bg-[var(--color-card)] rounded-card shadow-lg p-6 inline-block">
+      <p className="text-[var(--color-text-light)] mb-4">我们已经在一起</p>
       <div className="flex items-center gap-3 flex-wrap justify-center">
         {units.map((u) => (
           <div key={u.label} className="text-center">
             <span className="block text-3xl font-bold text-primary bg-love-bg px-4 py-2 rounded-card min-w-[70px]">
               {String(u.value).padStart(2, '0')}
             </span>
-            <span className="text-xs text-gray-400 mt-1">{u.label}</span>
+            <span className="text-xs text-[var(--color-text-muted)] mt-1">{u.label}</span>
           </div>
         ))}
       </div>

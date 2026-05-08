@@ -38,7 +38,7 @@ export function TimelinePage() {
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="📅" title="时间轴" description="记录我们的故事" backTo="/" backLabel="回到首页" />
       <div className="grid md:grid-cols-3 gap-8">
-        <div className="bg-white rounded-card shadow p-6 md:sticky md:top-20 self-start">
+        <div className="bg-[var(--color-card)] rounded-card shadow p-6 md:sticky md:top-20 self-start">
           <h3 className="text-lg font-semibold text-primary mb-4">添加新事件</h3>
           <input type="date" value={eventDate} onChange={(e) => setEventDate(e.target.value)}
             className="w-full px-4 py-2.5 border-2 border-love-border rounded-card focus:border-primary focus:outline-none mb-3 transition-colors" />
@@ -59,17 +59,17 @@ export function TimelinePage() {
               {items.map((event) => (
                 <div key={event.id} className="relative mb-8 animate-fade-in">
                   <div className="absolute -left-8 top-6 w-4 h-4 bg-primary rounded-full border-2 border-white shadow" />
-                  <div className="bg-white rounded-card shadow p-5 group">
+                  <div className="bg-[var(--color-card)] rounded-card shadow p-5 group">
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2">
                         <span className="text-xl">{event.icon}</span>
                         <span className="text-sm font-semibold text-primary">{new Date(event.eventDate).toLocaleDateString('zh-CN')}</span>
                       </div>
                       <button onClick={() => { if (window.confirm('确定删除这个事件吗？')) deleteEvent.mutate(event.id); }}
-                        className="text-gray-300 hover:text-red-500 transition-colors text-sm opacity-0 group-hover:opacity-100">删除</button>
+                        className="text-[var(--color-text-muted)] hover:text-red-500 transition-colors text-sm opacity-0 group-hover:opacity-100">删除</button>
                     </div>
-                    <h4 className="font-semibold text-gray-800 mb-1">{event.title}</h4>
-                    {event.description && <p className="text-sm text-gray-500">{event.description}</p>}
+                    <h4 className="font-semibold text-[var(--color-text)] mb-1">{event.title}</h4>
+                    {event.description && <p className="text-sm text-[var(--color-text-light)]">{event.description}</p>}
                     <ReplySection targetType="timeline" targetId={event.id} />
                   </div>
                 </div>

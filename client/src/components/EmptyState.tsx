@@ -8,7 +8,7 @@ interface EmptyStateProps {
 
 export function EmptyState({ icon, message, action }: EmptyStateProps) {
   return (
-    <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+    <div className="flex flex-col items-center justify-center py-16 text-[var(--color-text-muted)]">
       <span className="text-5xl mb-4">{icon}</span>
       <p className="text-sm">{message}</p>
       {action && <div className="mt-4">{action}</div>}

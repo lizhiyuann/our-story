@@ -38,7 +38,7 @@ export function RantPage() {
     <div className="max-w-6xl mx-auto py-8 px-4">
       <PageHeader icon="😤" title="吐槽专区" description="不开心就来这里发泄" backTo="/" backLabel="回到首页" />
       <div className="grid md:grid-cols-2 gap-8">
-        <div className="bg-white rounded-card shadow p-6">
+        <div className="bg-[var(--color-card)] rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-red-500 mb-4">有什么不开心的？说出来！</h3>
           <div className="flex gap-2 mb-4">
             {RANT_TYPES.map((t) => (
@@ -51,7 +51,7 @@ export function RantPage() {
           <textarea value={content} onChange={(e) => setContent(e.target.value)} placeholder="尽情发泄吧..." rows={4}
             className="w-full px-4 py-3 border-2 border-love-border rounded-card focus:border-red-400 focus:outline-none resize-none transition-colors" />
           <div className="flex items-center gap-3 my-3">
-            <label className="text-sm text-gray-600 whitespace-nowrap">生气程度：</label>
+            <label className="text-sm text-[var(--color-text-light)] whitespace-nowrap">生气程度：</label>
             <input type="range" min={1} max={10} value={intensity} onChange={(e) => setIntensity(Number(e.target.value))} className="flex-1 accent-red-500" />
             <span className="text-red-500 font-bold w-6 text-center">{intensity}</span>
           </div>
@@ -60,7 +60,7 @@ export function RantPage() {
             {createRant.isPending ? '发泄中...' : '发泄！🔥'}
           </button>
         </div>
-        <div className="bg-white rounded-card shadow p-6">
+        <div className="bg-[var(--color-card)] rounded-card shadow p-6">
           <h3 className="text-lg font-semibold text-red-500 mb-4">发泄记录</h3>
           <div className="max-h-[500px] overflow-y-auto space-y-3">
             {isLoading ? <LoadingState /> : isError ? <EmptyState icon="⚠️" message="加载失败，请刷新重试" /> : rants.length === 0 ? <EmptyState icon="😤" message="还没有吐槽记录哦~" /> : rants.map((rant) => (
@@ -68,12 +68,12 @@ export function RantPage() {
                 <div className="flex justify-between items-center mb-2">
                   <span className="bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">{RANT_TYPE_NAMES[rant.rantType] ?? rant.rantType}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-400">{formatRelativeTime(rant.createdAt)}</span>
+                    <span className="text-xs text-[var(--color-text-muted)]">{formatRelativeTime(rant.createdAt)}</span>
                     <button onClick={() => { if (window.confirm('确定删除这条吐槽吗？')) deleteRant.mutate(rant.id); }}
-                      className="text-gray-300 hover:text-red-500 transition-colors text-sm">删除</button>
+                      className="text-[var(--color-text-muted)] hover:text-red-500 transition-colors text-sm">删除</button>
                   </div>
                 </div>
-                <p className="text-gray-700 mb-2">{rant.content}</p>
+                <p className="text-[var(--color-text)] mb-2">{rant.content}</p>
                 <div className="h-1 bg-gradient-to-r from-yellow-400 to-red-500 rounded" style={{ width: `${rant.intensity * 10}%` }} />
                 <ReplySection targetType="rant" targetId={rant.id} />
               </div>

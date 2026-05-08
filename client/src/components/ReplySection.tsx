@@ -31,11 +31,11 @@ export function ReplySection({ targetType, targetId }: ReplySectionProps) {
   };
 
   return (
-    <div className="mt-3 border-t border-gray-100 pt-2">
+    <div className="mt-3 border-t border-[var(--color-border)] pt-2">
       {/* 展开/收起按钮 */}
       <button
         onClick={() => setExpanded(!expanded)}
-        className="text-xs text-gray-400 hover:text-primary transition-colors flex items-center gap-1"
+        className="text-xs text-[var(--color-text-muted)] hover:text-primary transition-colors flex items-center gap-1"
       >
         💬 {count > 0 ? `回复 (${count})` : '回复'}
         {expanded ? ' ▲' : ' ▼'}
@@ -45,19 +45,19 @@ export function ReplySection({ targetType, targetId }: ReplySectionProps) {
       {expanded && (
         <div className="mt-2 space-y-2 animate-fade-in">
           {isLoading ? (
-            <p className="text-xs text-gray-400">加载中...</p>
+            <p className="text-xs text-[var(--color-text-muted)]">加载中...</p>
           ) : items.length === 0 ? (
-            <p className="text-xs text-gray-300">还没有回复~</p>
+            <p className="text-xs text-[var(--color-text-muted)]">还没有回复~</p>
           ) : (
             items.map((reply) => (
               <div key={reply.id} className="flex items-start gap-2 text-sm">
                 <span className="text-xs font-medium text-primary shrink-0">
                   {reply.displayName ?? '匿名'}
                 </span>
-                <p className="text-gray-600 flex-1">{reply.content}</p>
+                <p className="text-[var(--color-text-light)] flex-1">{reply.content}</p>
                 <button
                   onClick={() => { if (window.confirm('删除这条回复？')) deleteReply.mutate(reply.id); }}
-                  className="text-gray-300 hover:text-red-400 text-xs shrink-0"
+                  className="text-[var(--color-text-muted)] hover:text-red-400 text-xs shrink-0"
                 >
                   ✕
                 </button>
@@ -73,7 +73,7 @@ export function ReplySection({ targetType, targetId }: ReplySectionProps) {
               onChange={(e) => setContent(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSubmit()}
               placeholder="说点什么..."
-              className="flex-1 px-3 py-1.5 text-sm border border-gray-200 rounded-full focus:border-primary focus:outline-none transition-colors"
+              className="flex-1 px-3 py-1.5 text-sm border border-[var(--color-border)] rounded-full focus:border-primary focus:outline-none transition-colors"
             />
             <button
               onClick={handleSubmit}
