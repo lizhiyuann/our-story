@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <defs>
+    <radialGradient id="fur" cx="50%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="#F5DCA0"/>
+      <stop offset="50%" stop-color="#E8C878"/>
+      <stop offset="100%" stop-color="#C49540"/>
+    </radialGradient>
+    <radialGradient id="chest" cx="50%" cy="30%" r="50%">
+      <stop offset="0%" stop-color="#FFF8EE"/>
+      <stop offset="100%" stop-color="#F5E6D0"/>
+    </radialGradient>
+    <radialGradient id="eye" cx="40%" cy="35%" r="50%">
+      <stop offset="0%" stop-color="#8B6B3A"/>
+      <stop offset="100%" stop-color="#4A3520"/>
+    </radialGradient>
+  </defs>
+  <!-- 尾巴（走路时抬起）-->
+  <path d="M55 145 Q25 125 30 105 Q35 90 48 100" stroke="#C49540" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <!-- 身体（走路姿态，略倾斜）-->
+  <ellipse cx="105" cy="135" rx="48" ry="32" fill="url(#fur)" transform="rotate(-3,105,135)"/>
+  <ellipse cx="105" cy="130" rx="28" ry="20" fill="url(#chest)" opacity="0.7"/>
+  <!-- 后腿（迈步）-->
+  <rect x="68" y="155" width="13" height="30" rx="6.5" fill="#D4A55A" transform="rotate(10,75,155)"/>
+  <rect x="88" y="155" width="13" height="30" rx="6.5" fill="#C49540" transform="rotate(-8,95,155)"/>
+  <!-- 前腿（迈步）-->
+  <rect x="118" y="155" width="13" height="30" rx="6.5" fill="#D4A55A" transform="rotate(-12,125,155)"/>
+  <rect x="138" y="155" width="13" height="30" rx="6.5" fill="#C49540" transform="rotate(8,145,155)"/>
+  <!-- 爪子 -->
+  <ellipse cx="72" cy="184" rx="8" ry="4" fill="#F0E0C8" transform="rotate(10,72,184)"/>
+  <ellipse cx="88" cy="183" rx="8" ry="4" fill="#F0E0C8" transform="rotate(-8,88,183)"/>
+  <ellipse cx="120" cy="183" rx="8" ry="4" fill="#F0E0C8" transform="rotate(-12,120,183)"/>
+  <ellipse cx="140" cy="184" rx="8" ry="4" fill="#F0E0C8" transform="rotate(8,140,184)"/>
+  <!-- 头 -->
+  <ellipse cx="100" cy="85" rx="38" ry="33" fill="url(#fur)"/>
+  <ellipse cx="100" cy="93" rx="26" ry="20" fill="url(#chest)" opacity="0.6"/>
+  <!-- 耳朵 -->
+  <path d="M72 60 L60 25 L85 52 Z" fill="#D4A55A"/>
+  <path d="M74 54 L66 30 L82 50 Z" fill="#FFB6C1" opacity="0.4"/>
+  <path d="M128 60 L140 25 L115 52 Z" fill="#D4A55A"/>
+  <path d="M126 54 L134 30 L118 50 Z" fill="#FFB6C1" opacity="0.4"/>
+  <!-- 眼睛（看前方）-->
+  <ellipse cx="86" cy="80" rx="9" ry="8" fill="#F8F4E8"/>
+  <ellipse cx="114" cy="80" rx="9" ry="8" fill="#F8F4E8"/>
+  <ellipse cx="86" cy="80" rx="6" ry="7" fill="url(#eye)"/>
+  <ellipse cx="114" cy="80" rx="6" ry="7" fill="url(#eye)"/>
+  <ellipse cx="87" cy="80" rx="3" ry="6.5" fill="#1A1208"/>
+  <ellipse cx="115" cy="80" rx="3" ry="6.5" fill="#1A1208"/>
+  <circle cx="89" cy="77" r="2" fill="white" opacity="0.9"/>
+  <circle cx="117" cy="77" r="2" fill="white" opacity="0.9"/>
+  <!-- 鼻子 -->
+  <path d="M96 92 L100 96 L104 92 Z" fill="#FFB6C1"/>
+  <!-- 嘴巴 -->
+  <path d="M100 96 L100 99" stroke="#8B6B5A" stroke-width="1"/>
+  <path d="M94 100 Q100 103 106 100" stroke="#8B6B5A" stroke-width="1" fill="none" stroke-linecap="round"/>
+  <!-- 胡须 -->
+  <line x1="72" y1="90" x2="44" y2="86" stroke="#C4A060" stroke-width="1" opacity="0.4"/>
+  <line x1="72" y1="94" x2="44" y2="94" stroke="#C4A060" stroke-width="1" opacity="0.4"/>
+  <line x1="128" y1="90" x2="156" y2="86" stroke="#C4A060" stroke-width="1" opacity="0.4"/>
+  <line x1="128" y1="94" x2="156" y2="94" stroke="#C4A060" stroke-width="1" opacity="0.4"/>
+</svg>
