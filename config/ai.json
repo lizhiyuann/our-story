@@ -28,11 +28,11 @@
     },
     "xiaomi": {
       "_comment": "小米 MiLM 大模型（通过小米云 API）",
-      "envKey": "sk-co17ukatzaztfwkgzige4kr3wyoof7hjr8kpzg5a3112h26z",
+      "envKey": "XIAOMI_API_KEY",
       "baseUrl": "https://api.xiaomimimo.com/v1",
       "defaultModel": "mimo-v2.5-pro",
       "models": {
-        "mmimo-v2.5-pro":         { "maxTokens": 4096, "description": "小米大模型，中文能力强" },
+        "mimo-v2.5-pro":         { "maxTokens": 4096, "description": "小米大模型，中文能力强" },
         "mimo-v2.5":        { "maxTokens": 4096, "description": "小米多模态模型，速度快" },
         "mimo-v2.5-tts":         { "maxTokens": 2048, "description": "小米语音模型，最快速" }
       }
