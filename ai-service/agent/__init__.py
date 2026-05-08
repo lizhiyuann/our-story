@@ -1,4 +1,4 @@
-from .graph import build_agent
+from .graph import get_agent
 from .state import AgentState
 
-__all__ = ["build_agent", "AgentState"]
+__all__ = ["get_agent", "AgentState"]

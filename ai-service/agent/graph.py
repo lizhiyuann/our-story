@@ -38,6 +38,10 @@ def _create_llm():
 
     log_event(logger, 20, "agent.llm.init", 厂商=provider, 模型=model, 地址=base_url)
 
+    if not api_key:
+        log_event(logger, 30, "agent.llm.no_key", 厂商=provider)
+        return None
+
     if provider == "anthropic":
         from langchain_anthropic import ChatAnthropic
         return ChatAnthropic(
@@ -152,6 +156,15 @@ class LoveAgent:
         # 将用户消息加入短期记忆
         self.short_term.add_message(user_id, "user", message)
         messages = self.short_term.get_messages(user_id)
+
+        # 如果没有配置 LLM，直接使用关键词降级
+        if not self.llm:
+            log_event(logger, 20, "agent.request.fallback", 原因="无API Key")
+            reply = self._fallback(message)
+            self.short_term.add_message(user_id, "assistant", reply)
+            elapsed = int((time.monotonic() - start) * 1000)
+            log_event(logger, 20, "agent.request.done", 请求ID=request_id, 总耗时ms=elapsed, 回复长度=len(reply), 来源="fallback")
+            return reply
 
         # 构建初始状态
         initial_state: AgentState = {

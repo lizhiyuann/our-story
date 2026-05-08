@@ -6,7 +6,7 @@
 
 import json
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -77,7 +77,7 @@ class Config:
     """应用全局配置单例。"""
 
     # --- 服务端口 ---
-    port: int = int(os.getenv("PORT", "8000"))
+    port: int = int(os.getenv("AI_SERVICE_PORT", "8000"))
 
     # --- 大模型厂商 ---
     provider_name: str = _provider.name        # 当前厂商名
@@ -85,7 +85,7 @@ class Config:
     base_url: str = _provider.base_url         # API 地址
     model: str = os.getenv("LLM_MODEL", _provider.default_model)  # 模型名
     max_tokens: int = int(os.getenv("LLM_MAX_TOKENS", str(_ai_cfg.get("defaultMaxTokens", 600))))
-    provider_models: dict[str, dict] = _provider.models  # 该厂商所有可用模型
+    provider_models: dict[str, dict] = field(default_factory=lambda: _provider.models)  # 该厂商所有可用模型
 
     # --- Node.js 后端地址 ---
     api_base_url: str = os.getenv("API_BASE_URL", "http://server:3001")
@@ -110,8 +110,8 @@ class Config:
     long_term_max_results: int = _ai_cfg.get("memory", {}).get("longTermMaxResults", 5)
 
     # --- 降级回复模板（来自 config/ai.json）---
-    fallback_responses: dict[str, list[str]] = _ai_cfg.get("fallbackResponses", {})
-    default_replies: list[str] = _ai_cfg.get("defaultReplies", ["嗯嗯，我在听呢~ 💕"])
+    fallback_responses: dict[str, list[str]] = field(default_factory=lambda: _ai_cfg.get("fallbackResponses", {}))
+    default_replies: list[str] = field(default_factory=lambda: _ai_cfg.get("defaultReplies", ["嗯嗯，我在听呢~ 💕"]))
 
     @property
     def is_dev(self) -> bool:

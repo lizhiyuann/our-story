@@ -54,7 +54,7 @@ async def chat(req: ChatRequest):
 
 @app.get("/health")
 async def health():
-    return {"status": "ok", "model": cfg.model, "ai_enabled": bool(cfg.anthropic_api_key)}
+    return {"status": "ok", "model": cfg.model, "ai_enabled": bool(cfg.api_key)}
 
 
 if __name__ == "__main__":
